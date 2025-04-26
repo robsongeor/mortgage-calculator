@@ -6,11 +6,16 @@ class LoanCalculator {
         this.loanRate = loanRate;
         this.loanTerm = loanTerm;
 
+        this.bindEvents();
+    }
+    
+    bindEvents(){
+        //recieve input values
         events.on("requestCalculator", this.calculate.bind(this))
     }
 
-    calculate(){
-        console.log("calculate")
+    calculate(values){
+        console.log(values)
     }
   
 }
