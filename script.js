@@ -29,13 +29,15 @@ class LoanCalculator {
 
         let balance = calc.calculateBalance(values);
         let princeplePaid = values["loan-amount"] - balance;
-        let interestPaid = values["payment-amt"] * values["payment-freq"] - princeplePaid;
+        let totalPaid = values["payment-amt"] * values["payment-freq"]
 
+        let interestPaid =  totalPaid- princeplePaid;
+        
         console.log(values)
         console.log(princeplePaid)
         console.log(interestPaid)
 
-        events.emit("calculateBalance", {balance, princeplePaid, interestPaid})
+        events.emit("calculateBalance", {balance, princeplePaid, interestPaid, totalPaid})
 
     }
   
@@ -70,7 +72,8 @@ class DOMHandler {
         let outputs = {
             princeplePaid: document.querySelector(".loan-principle").querySelector(".out-value"),
             interestPaid: document.querySelector(".loan-interest").querySelector(".out-value"),
-            totalPaid: document.querySelector(".loan-total").querySelector(".out-value")
+            totalPaid: document.querySelector(".loan-total").querySelector(".out-value"),
+            balance: document.querySelector(".loan-remaining").querySelector(".out-value")
         }
 
         cacheDOM = {inputs, buttons, outputs}
@@ -96,9 +99,10 @@ class DOMHandler {
 
     updateCalculatorBalance(balance){
        // console.log(this.cacheDOM.outputs);
-        this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance.balance);
+        this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance.totalPaid);
         this.cacheDOM.outputs.interestPaid.textContent = Math.floor(balance.interestPaid);
         this.cacheDOM.outputs.princeplePaid.textContent = Math.floor(balance.princeplePaid);
+        this.cacheDOM.outputs.balance.textContent = Math.floor(balance.balance)
 
     }   
 
