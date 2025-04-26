@@ -32,10 +32,8 @@ class LoanCalculator {
         let totalPaid = values["payment-amt"] * values["payment-freq"]
 
         let interestPaid =  totalPaid- princeplePaid;
-        
-        console.log(values)
-        console.log(princeplePaid)
-        console.log(interestPaid)
+
+        console.log(calc.betterCalculateBalance(values))
 
         events.emit("calculateBalance", {balance, princeplePaid, interestPaid, totalPaid})
 
@@ -61,6 +59,7 @@ class DOMHandler {
             loanInput: document.querySelector("#loan-amount"),
             rateInput: document.querySelector("#loan-rate"),
             termInput: document.querySelector("#loan-term"),
+            termMonths: document.querySelector("#loan-term-months"),
             paymentAmt: document.querySelector("#payment-amt"),
             paymentFreqInput: document.querySelector("#payment-freq")
         }
@@ -93,21 +92,16 @@ class DOMHandler {
             inputValues[value.name] = value.value
         }
 
-        console.log(inputValues)
         events.emit("requestCalculator", inputValues);
     }
 
     updateCalculatorBalance(balance){
-       // console.log(this.cacheDOM.outputs);
         this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance.totalPaid);
         this.cacheDOM.outputs.interestPaid.textContent = Math.floor(balance.interestPaid);
         this.cacheDOM.outputs.princeplePaid.textContent = Math.floor(balance.princeplePaid);
         this.cacheDOM.outputs.balance.textContent = Math.floor(balance.balance)
 
-    }   
-
-
-
+    }  
 
 }
 
