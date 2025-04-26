@@ -1,9 +1,18 @@
+import events from './pubsub.js'
+
 class LoanCalculator {
     constructor(loanAmount, loanRate, loanTerm){
         this.loanAmount = loanAmount;
         this.loanRate = loanRate;
         this.loanTerm = loanTerm;
+
+        events.on("requestCalculator", this.calculate.bind(this))
     }
+
+    calculate(){
+        console.log("calculate")
+    }
+  
 }
 
 class DOMHandler {
@@ -41,7 +50,7 @@ class DOMHandler {
             inputValues[value.name] = value.value
         }
 
-        
+        events.emit("requestCalculator", inputValues);
     }
 
 
@@ -50,3 +59,4 @@ class DOMHandler {
 }
 
 let dh = new DOMHandler()
+let c = new LoanCalculator()

@@ -24,3 +24,5 @@ var events = {
       }
     }
   };
+
+export default events;
