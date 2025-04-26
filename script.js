@@ -1,4 +1,6 @@
 import events from './pubsub.js'
+import calc from './calculatorHelper.js';
+
 
 class LoanCalculator {
     constructor(loanAmount, loanRate, loanTerm){
@@ -15,7 +17,12 @@ class LoanCalculator {
     }
 
     calculate(values){
-        console.log(values)
+        let inputVals = {};
+
+        //Handles converting freq string into number
+        values["payment-freq"] = calc.freqToNumber(values["payment-freq"])
+        
+        console.log(calc.minimumRepayments(values));
     }
   
 }
@@ -33,6 +40,7 @@ class DOMHandler {
             loanInput: document.querySelector("#loan-amount"),
             rateInput: document.querySelector("#loan-rate"),
             termInput: document.querySelector("#loan-term"),
+            paymentFreqInput: document.querySelector("#payment-freq")
         }
 
         let buttons = {
@@ -55,6 +63,7 @@ class DOMHandler {
             inputValues[value.name] = value.value
         }
 
+        console.log(inputValues)
         events.emit("requestCalculator", inputValues);
     }
 
