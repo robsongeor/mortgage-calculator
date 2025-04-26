@@ -5,3 +5,9 @@ class LoanCalculator {
         this.loanTerm = loanTerm;
     }
 }
+
+class DOMHandler {
+    constructor(){
+        
+    }
+}
