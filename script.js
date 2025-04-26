@@ -27,10 +27,10 @@ class LoanCalculator {
             values[key] = Number(value)
         }
 
+        let balance = calc.calculateBalance(values);
 
-        console.log(calc.calculateBalance(values))
-        console.log(values)
-        //console.log(calc.minimumRepayments(values));
+        events.emit("calculateBalance", balance)
+
     }
   
 }
@@ -39,6 +39,11 @@ class DOMHandler {
     constructor(){
         this.cacheDOM = this.cacheDOM()
         this.eventListeners = this.eventListeners()
+        this.bindEvents();
+    }
+
+    bindEvents(){
+        events.on("calculateBalance", this.updateCalculatorBalance.bind(this))
     }
 
     cacheDOM(){
@@ -56,13 +61,20 @@ class DOMHandler {
             calculate: document.querySelector(".calculate-button")
         }
 
-        cacheDOM = {inputs, buttons}
+        let outputs = {
+            princeplePaid: document.querySelector(".loan-principle").querySelector(".out-value"),
+            interestPaid: document.querySelector(".loan-interest").querySelector(".out-value"),
+            totalPaid: document.querySelector(".loan-total").querySelector(".out-value")
+        }
+
+        cacheDOM = {inputs, buttons, outputs}
 
         return cacheDOM
     }
 
     eventListeners(){
         this.cacheDOM.buttons.calculate.addEventListener("click", this.dispatchValues.bind(this))
+        
     }
 
     dispatchValues(){
@@ -75,6 +87,11 @@ class DOMHandler {
         console.log(inputValues)
         events.emit("requestCalculator", inputValues);
     }
+
+    updateCalculatorBalance(balance){
+       // console.log(this.cacheDOM.outputs);
+        this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance);
+    }   
 
 
 

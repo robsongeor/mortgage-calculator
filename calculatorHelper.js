@@ -70,8 +70,6 @@ const calc = (function () {
         }
     }
 
-
-
     const getTotalDaysInMonth = function (month, year) {
         //+1 to interpret as 0th days of next month => last day of current month
         return new Date(year, month + 1, 0).getDate()
