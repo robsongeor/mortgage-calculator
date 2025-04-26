@@ -40,6 +40,7 @@ class DOMHandler {
             loanInput: document.querySelector("#loan-amount"),
             rateInput: document.querySelector("#loan-rate"),
             termInput: document.querySelector("#loan-term"),
+            paymentAmt: document.querySelector("#payment-amt"),
             paymentFreqInput: document.querySelector("#payment-freq")
         }
 
