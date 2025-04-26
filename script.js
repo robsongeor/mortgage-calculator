@@ -21,8 +21,16 @@ class LoanCalculator {
 
         //Handles converting freq string into number
         values["payment-freq"] = calc.freqToNumber(values["payment-freq"])
-        
-        console.log(calc.minimumRepayments(values));
+
+        //convert to Numbers
+        for(const [key, value] of Object.entries(values)){
+            values[key] = Number(value)
+        }
+
+
+        console.log(calc.calculateBalance(values))
+        console.log(values)
+        //console.log(calc.minimumRepayments(values));
     }
   
 }
