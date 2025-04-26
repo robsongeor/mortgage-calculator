@@ -8,6 +8,22 @@ class LoanCalculator {
 
 class DOMHandler {
     constructor(){
-        
+        this.cacheDOM = this.cacheDOM()
     }
+
+    cacheDOM(){
+        let cacheDOM = {};
+
+        let inputs = {
+            loanInput: document.querySelector("#loan-amount"),
+            rateInput: document.querySelector("#loan-rate"),
+            termInput: document.querySelector("#loan-term"),
+        }
+
+        cacheDOM = {inputs}
+
+        return cacheDOM
+    }
+
+    
 }
