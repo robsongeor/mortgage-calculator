@@ -28,8 +28,14 @@ class LoanCalculator {
         }
 
         let balance = calc.calculateBalance(values);
+        let princeplePaid = values["loan-amount"] - balance;
+        let interestPaid = values["payment-amt"] * values["payment-freq"] - princeplePaid;
 
-        events.emit("calculateBalance", balance)
+        console.log(values)
+        console.log(princeplePaid)
+        console.log(interestPaid)
+
+        events.emit("calculateBalance", {balance, princeplePaid, interestPaid})
 
     }
   
@@ -90,7 +96,10 @@ class DOMHandler {
 
     updateCalculatorBalance(balance){
        // console.log(this.cacheDOM.outputs);
-        this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance);
+        this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance.balance);
+        this.cacheDOM.outputs.interestPaid.textContent = Math.floor(balance.interestPaid);
+        this.cacheDOM.outputs.princeplePaid.textContent = Math.floor(balance.princeplePaid);
+
     }   
 
 
