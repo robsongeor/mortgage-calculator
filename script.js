@@ -20,10 +20,14 @@ class DOMHandler {
             termInput: document.querySelector("#loan-term"),
         }
 
-        cacheDOM = {inputs}
+        let buttons = {
+            calculate: document.querySelector(".calculate-button")
+        }
+
+        cacheDOM = {inputs, buttons}
 
         return cacheDOM
     }
 
-    
+
 }
