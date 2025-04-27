@@ -3,56 +3,69 @@ import calc from './calculatorHelper.js';
 
 
 class LoanCalculator {
-    constructor(loanAmount, loanRate, loanTerm){
+    constructor(loanAmount, loanRate, loanTerm) {
         this.loanAmount = loanAmount;
         this.loanRate = loanRate;
         this.loanTerm = loanTerm;
 
         this.bindEvents();
     }
-    
-    bindEvents(){
+
+    bindEvents() {
         //recieve input values
         events.on("requestCalculator", this.calculate.bind(this))
     }
 
-    calculate(values){
-        let inputVals = {};
+    calculate(values) {
 
         //Handles converting freq string into number
         values["payment-freq"] = calc.freqToNumber(values["payment-freq"])
 
         //convert to Numbers
-        for(const [key, value] of Object.entries(values)){
+        for (const [key, value] of Object.entries(values)) {
             values[key] = Number(value)
         }
 
-        let balance = calc.calculateBalance(values);
-        let princeplePaid = values["loan-amount"] - balance;
-        let totalPaid = values["payment-amt"] * values["payment-freq"]
+        //Store calculated outputs into object
+        let outputs = function (){
 
-        let interestPaid =  totalPaid- princeplePaid;
+            let totalPaid = values["payment-amt"] * values["payment-freq"];
+            let balance = calc.betterCalculateBalance(values);
+            let princeplePaid = values["loan-amount"] - balance;
+            let interestPaid = totalPaid - princeplePaid;
+
+            return {totalPaid, balance, princeplePaid, interestPaid}
+        }()
 
         console.log(calc.betterCalculateBalance(values))
 
-        events.emit("calculateBalance", {balance, princeplePaid, interestPaid, totalPaid})
+        let cardData = {
+            inputs: values,
+            outputs: outputs
+
+        }
+
+        console.log(cardData)
+
+        events.emit("calculateBalance", outputs)
 
     }
-  
+
 }
 
+
 class DOMHandler {
-    constructor(){
+    constructor() {
         this.cacheDOM = this.cacheDOM()
         this.eventListeners = this.eventListeners()
         this.bindEvents();
     }
 
-    bindEvents(){
+    bindEvents() {
         events.on("calculateBalance", this.updateCalculatorBalance.bind(this))
     }
 
-    cacheDOM(){
+    cacheDOM() {
         let cacheDOM = {};
 
         let inputs = {
@@ -75,33 +88,33 @@ class DOMHandler {
             balance: document.querySelector(".loan-remaining").querySelector(".out-value")
         }
 
-        cacheDOM = {inputs, buttons, outputs}
+        cacheDOM = { inputs, buttons, outputs }
 
         return cacheDOM
     }
 
-    eventListeners(){
+    eventListeners() {
         this.cacheDOM.buttons.calculate.addEventListener("click", this.dispatchValues.bind(this))
-        
+
     }
 
-    dispatchValues(){
+    dispatchValues() {
         let inputValues = {}
 
-        for(const value of Object.values(this.cacheDOM.inputs)){
+        for (const value of Object.values(this.cacheDOM.inputs)) {
             inputValues[value.name] = value.value
         }
 
         events.emit("requestCalculator", inputValues);
     }
 
-    updateCalculatorBalance(balance){
+    updateCalculatorBalance(balance) {
         this.cacheDOM.outputs.totalPaid.textContent = Math.floor(balance.totalPaid);
         this.cacheDOM.outputs.interestPaid.textContent = Math.floor(balance.interestPaid);
         this.cacheDOM.outputs.princeplePaid.textContent = Math.floor(balance.princeplePaid);
         this.cacheDOM.outputs.balance.textContent = Math.floor(balance.balance)
 
-    }  
+    }
 
 }
 
