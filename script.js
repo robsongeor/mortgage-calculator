@@ -82,6 +82,7 @@ class FormElement {
         this.cacheDOM = this.cacheDOM()
 
         this.bindEvents()
+        this.eventListeners()
     }
 
     cacheDOM() {
@@ -95,7 +96,6 @@ class FormElement {
             save: form.querySelector(".save"),
             cancel: form.querySelector(".cancel")
         }
-
 
         return { form, buttons }
     }
@@ -111,7 +111,8 @@ class FormElement {
     }
 
     eventListeners() {
-
+        this.cacheDOM.buttons.save.addEventListener("click", () => console.log("saved"));
+        this.cacheDOM.buttons.cancel.addEventListener("click", () => this.display(false));
     }
 
     bindEvents() {
