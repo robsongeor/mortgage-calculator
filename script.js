@@ -222,8 +222,11 @@ class TermCardModule{
         this.bindEvents()
     }
 
-    createNewTermCard(){
+    createNewTermCard(term){
+
         let newTermCard = new TermCard();
+        newTermCard.updateContent(term)
+
         this.TermCards.push(newTermCard)
         
     }
@@ -236,6 +239,7 @@ class TermCardModule{
 class TermCard {
     constructor(){
         this.cacheDOM = this.cacheDOM()
+     
     }
     cacheDOM(){
         let template = document.querySelector("#template-term-card").content.children[0];
@@ -243,18 +247,32 @@ class TermCard {
         let parentContainer = document.querySelector(".container");
 
         let inputs = {
-            amount : termCard.querySelector("#loan-amount"),
-            rate: termCard.querySelector("#loan-rate"),
-            term: termCard.querySelector("#loan-term"),
-            termMonths: termCard.querySelector("#loan-term-months"),
-            payments: termCard.querySelector("#loan-payments"),
-            paymentFreq: termCard.querySelector("#loan-payment-freq")
+            amount : termCard.querySelector(".loan-amount"),
+            rate: termCard.querySelector(".loan-rate"),
+            term: termCard.querySelector(".loan-term"),
+            termMonths: termCard.querySelector(".loan-term-months"),
+            payments: termCard.querySelector(".loan-payments"),
+            paymentFreq: termCard.querySelector(".loan-payment-freq")
 
         }
+
+        
 
         parentContainer.appendChild(termCard);
 
         return {termCard, inputs}
+    }
+
+    updateContent(term){
+       
+
+        
+        for( const [key, value] of Object.entries(this.cacheDOM.inputs)){
+            
+            value.textContent = term.inputs[key]
+        }
+
+
     }
 }
 
