@@ -217,31 +217,51 @@ class Term {
 class TermCardModule{
     //Handles the displaying of the terms
     constructor(){
-        this.DomTermCards = []
+        this.TermCards = [];
+
+        this.bindEvents()
     }
 
-    createNewDomTermCard(){
-        let newDomTermCard = new DomTermCard();
-        this.DomTermCards.push(newDomTermCard)
-
+    createNewTermCard(){
+        let newTermCard = new TermCard();
+        this.TermCards.push(newTermCard)
+        
     }
 
     bindEvents(){
-        events.on("CreateNewTermCard", this.createNewDomTermCard.bind(this))
+        events.on("CreateNewTermCard", this.createNewTermCard.bind(this))
     }
 }
 
 class TermCard {
     constructor(){
-
+        this.cacheDOM = this.cacheDOM()
     }
     cacheDOM(){
-        
+        let template = document.querySelector("#template-term-card").content.children[0];
+        let termCard = template.cloneNode(true)
+        let parentContainer = document.querySelector(".container");
+
+        let inputs = {
+            amount : termCard.querySelector("#loan-amount"),
+            rate: termCard.querySelector("#loan-rate"),
+            term: termCard.querySelector("#loan-term"),
+            termMonths: termCard.querySelector("#loan-term-months"),
+            payments: termCard.querySelector("#loan-payments"),
+            paymentFreq: termCard.querySelector("#loan-payment-freq")
+
+        }
+
+        parentContainer.appendChild(termCard);
+
+        return {termCard, inputs}
     }
 }
 
 let formElement = new FormElement();
 let htmlDom = new HTML_DOM();
 let termsModule = new TermsModule()
+
+let tcm = new TermCardModule();
 
 let c = new LoanCalculator()
