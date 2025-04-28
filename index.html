@@ -8,6 +8,33 @@
     
 </head>
 <body>
-
+    <div class="container">
+        <button class="create">Create New</button>
+    </div>
 </body>
 </html>
+
+<template id="template-form">
+    <div class="input-form">
+        <label for="loan-amount">loan amount</label>
+        <input type="number" name="loan-amount" id="loan-amount">
+
+        <label for="loan-rate">loan rate</label>
+        <input type="number" name="loan-rate" id="loan-rate">
+
+        <label for="loan-term">loan term</label>
+        <input type="number" name="loan-term" id="loan-term">
+
+        <label for="loan-term-months">loan term months</label>
+        <input type="number" name="loan-term-months" id="loan-term-months">
+
+        <label for="loan-payments">loan payments</label>
+        <input type="number" name="loan-payments" id="loan-payments">
+
+        <label for="loan-payment-freq">loan payment freq</label>
+        <input type="number" name="loan-payment-freq" id="loan-payment-freq">
+
+        <button class="save">save</button>
+        <button class="cancel">cancel</button>
+    </div>
+</template>
