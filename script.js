@@ -87,6 +87,7 @@ class FormElement {
 
         this.isEdit = false;
         this.isCreate = false;
+        this.editIndex = 0;
     }
 
     cacheDOM() {
@@ -148,6 +149,7 @@ class FormElement {
 
         //If editing a term
         if(this.isEdit){
+            let index = this.editIndex;
             events.emit("EditTerm", {inputData, index})
         }
 
@@ -155,6 +157,20 @@ class FormElement {
         this.isEdit = false;
         this.display(false);
         this.clearInputs()
+    }
+
+    recieveInputs(inputAndIndex){
+        this.display(true);
+        this.isEdit = true;
+        this.editIndex = inputAndIndex.index;
+        
+        let inputs = inputAndIndex.inputData;
+
+        console.log(inputAndIndex)
+
+        for(const [key, value] of Object.entries(this.cacheDOM.inputs)){
+            value.value = inputs[key]
+        }
     }
 
     eventListeners() {
@@ -166,6 +182,7 @@ class FormElement {
         events.on("openForm", this.display.bind(this))
         events.on("closeForm", this.display.bind(this))
         events.on("isCreate", () => this.isCreate = true)
+        events.on("EditThisTerm", this.recieveInputs.bind(this))
     }
 
 }
@@ -184,20 +201,43 @@ class TermsModule {
 
         this.termsArray.push(newTerm);
 
-        console.log(this.termsArray);
-
         events.emit("CreateNewTermCard", newTerm)
     }
 
     editTermAtIndex(dataAndIndex){
-        let index = termAndIndex.index;
-        let inputData = termAndIndex.inputs;
-        console.log(inputData, index)
-        //this.termsArray[index].editTerm(inputData)
+
+        let index = dataAndIndex.index;
+        let inputData = dataAndIndex.inputData;
+
+        this.termsArray[index].editTerm(inputData)
+    }
+
+    sendTermDataToForm(index){
+        let inputData = this.termsArray[index].inputs
+
+        events.emit("EditThisTerm", {inputData, index})
+    }
+
+    deleteTermAtIndex(index){
+        //remove element from array
+        this.termsArray.splice(index, 1);
+
+        //update indices for each item
+        this.updateIndices()
+
+    }
+
+    updateIndices(){
+        this.termsArray.forEach((element, index) => {
+            element.index = index;
+        });
     }
 
     bindEvents(){
         events.on("CreateNewTerm", this.createNewTerm.bind(this))
+        events.on("EditTerm", this.editTermAtIndex.bind(this))
+        events.on("DeleteTermButton", this.deleteTermAtIndex.bind(this))
+        events.on("EditTermButton", this.sendTermDataToForm.bind(this))
     }
 }
 
@@ -210,6 +250,8 @@ class Term {
     editTerm(inputData){
         this.inputs = inputData;
 
+        
+        events.emit("UpdatedTerm", this)
         //Get new outputs
     }
 }
@@ -217,29 +259,59 @@ class Term {
 class TermCardModule{
     //Handles the displaying of the terms
     constructor(){
-        this.TermCards = [];
+        this.termCards = [];
 
         this.bindEvents()
     }
 
     createNewTermCard(term){
-
-        let newTermCard = new TermCard();
+        let newTermCard = new TermCard(term.index);
         newTermCard.updateContent(term)
 
-        this.TermCards.push(newTermCard)
+        this.termCards.push(newTermCard)
         
     }
 
+    updateTermCard(term){
+        console.log(term)
+        let index = term.index;
+
+        this.termCards[index].updateContent(term)
+    }
+
+    
+    deleteTermAtIndex(index){
+        //Remove element from DOM
+        this.termCards[index].cacheDOM.termCard.remove();
+        
+        //remove element from array
+        this.termCards.splice(index, 1);
+
+        //update indices for each item
+        this.updateIndices()
+    }
+
+    updateIndices(){
+        this.termCards.forEach((element, index) => {
+            console.log
+            element.index = index;
+        });
+    }
+
+
     bindEvents(){
         events.on("CreateNewTermCard", this.createNewTermCard.bind(this))
+        events.on("DeleteTermButton", this.deleteTermAtIndex.bind(this))
+        events.on("UpdatedTerm", this.updateTermCard.bind(this))
     }
 }
 
 class TermCard {
-    constructor(){
+    constructor(index){
         this.cacheDOM = this.cacheDOM()
-     
+        this.index = index;
+
+        this.eventListeners()
     }
     cacheDOM(){
         let template = document.querySelector("#template-term-card").content.children[0];
@@ -253,26 +325,37 @@ class TermCard {
             termMonths: termCard.querySelector(".loan-term-months"),
             payments: termCard.querySelector(".loan-payments"),
             paymentFreq: termCard.querySelector(".loan-payment-freq")
-
         }
 
-        
+        let buttons = {
+            edit : termCard.querySelector(".edit-button"),
+            delete : termCard.querySelector(".delete-button")
+        }
 
         parentContainer.appendChild(termCard);
 
-        return {termCard, inputs}
+        return {termCard, inputs, buttons}
     }
 
-    updateContent(term){
-       
-
+    updateContent(term){   
         
+        //Update input text
         for( const [key, value] of Object.entries(this.cacheDOM.inputs)){
-            
             value.textContent = term.inputs[key]
         }
+    }
 
+    editTerm(){
+        events.emit("EditTermButton", this.index)
+    }
 
+    deleteTerm(){
+        events.emit("DeleteTermButton", this.index)
+    }
+
+    eventListeners(){
+        this.cacheDOM.buttons.edit.addEventListener("click", this.editTerm.bind(this))
+        this.cacheDOM.buttons.delete.addEventListener("click", this.deleteTerm.bind(this))
     }
 }
 
