@@ -73,7 +73,8 @@ class HTML_DOM {
     }
 
     createNew() {
-        events.emit("openForm", true)
+        events.emit("openForm", true);
+        events.emit("isCreate", true);
     }
 }
 
@@ -83,6 +84,9 @@ class FormElement {
 
         this.bindEvents()
         this.eventListeners()
+
+        this.isEdit = false;
+        this.isCreate = false;
     }
 
     cacheDOM() {
@@ -97,7 +101,17 @@ class FormElement {
             cancel: form.querySelector(".cancel")
         }
 
-        return { form, buttons }
+        let inputs = {
+            amount : form.querySelector("#loan-amount"),
+            rate: form.querySelector("#loan-rate"),
+            term: form.querySelector("#loan-term"),
+            termMonths: form.querySelector("#loan-term-months"),
+            payments: form.querySelector("#loan-payments"),
+            paymentFreq: form.querySelector("#loan-payment-freq")
+
+        }
+
+        return { form, buttons, inputs }
     }
 
     display(displayBool) {
@@ -110,19 +124,124 @@ class FormElement {
 
     }
 
+    clearInputs(){
+        //this.cacheDOM.inputs
+
+        for(const value of Object.values(this.cacheDOM.inputs)){
+            value.value = null;
+        }
+    }
+
+    saveData(){
+        // Store input values in object
+        let inputData = {}
+
+        for (const [key, element] of Object.entries(this.cacheDOM.inputs)){
+            inputData[key] = Number(element.value)
+        }
+
+        //IF creating new term
+        if(this.isCreate){
+            events.emit("CreateNewTerm", inputData)
+            
+        }
+
+        //If editing a term
+        if(this.isEdit){
+            events.emit("EditTerm", {inputData, index})
+        }
+
+        this.isCreate = false;
+        this.isEdit = false;
+        this.display(false);
+        this.clearInputs()
+    }
+
     eventListeners() {
-        this.cacheDOM.buttons.save.addEventListener("click", () => console.log("saved"));
+        this.cacheDOM.buttons.save.addEventListener("click", this.saveData.bind(this));
         this.cacheDOM.buttons.cancel.addEventListener("click", () => this.display(false));
     }
 
     bindEvents() {
         events.on("openForm", this.display.bind(this))
         events.on("closeForm", this.display.bind(this))
+        events.on("isCreate", () => this.isCreate = true)
     }
 
 }
 
+class TermsModule {
+    //Handles Term data
+    constructor (){
+        this.termsArray = [];
+
+        this.bindEvents()
+    }
+
+    createNewTerm(inputData){
+        let index = this.termsArray.length
+        let newTerm = new Term(inputData, index);
+
+        this.termsArray.push(newTerm);
+
+        console.log(this.termsArray);
+
+        events.emit("CreateNewTermCard", newTerm)
+    }
+
+    editTermAtIndex(dataAndIndex){
+        let index = termAndIndex.index;
+        let inputData = termAndIndex.inputs;
+        console.log(inputData, index)
+        //this.termsArray[index].editTerm(inputData)
+    }
+
+    bindEvents(){
+        events.on("CreateNewTerm", this.createNewTerm.bind(this))
+    }
+}
+
+class Term {
+    constructor (inputs, index){
+        this.inputs = inputs;
+        this.index = index;
+    }
+
+    editTerm(inputData){
+        this.inputs = inputData;
+
+        //Get new outputs
+    }
+}
+
+class TermCardModule{
+    //Handles the displaying of the terms
+    constructor(){
+        this.DomTermCards = []
+    }
+
+    createNewDomTermCard(){
+        let newDomTermCard = new DomTermCard();
+        this.DomTermCards.push(newDomTermCard)
+
+    }
+
+    bindEvents(){
+        events.on("CreateNewTermCard", this.createNewDomTermCard.bind(this))
+    }
+}
+
+class TermCard {
+    constructor(){
+
+    }
+    cacheDOM(){
+        
+    }
+}
+
 let formElement = new FormElement();
 let htmlDom = new HTML_DOM();
+let termsModule = new TermsModule()
 
 let c = new LoanCalculator()
