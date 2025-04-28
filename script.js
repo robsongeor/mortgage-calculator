@@ -91,8 +91,13 @@ class FormElement {
 
         parentContainer.appendChild(form);
 
+        let buttons = {
+            save: form.querySelector(".save"),
+            cancel: form.querySelector(".cancel")
+        }
 
-        return { form }
+
+        return { form, buttons }
     }
 
     display(displayBool) {
@@ -102,6 +107,10 @@ class FormElement {
         displayBool ?
             displayProp.style.setProperty("display", displayType) :
             displayProp.style.setProperty("display", "none")
+
+    }
+
+    eventListeners() {
 
     }
 
