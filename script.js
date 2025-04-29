@@ -3,11 +3,7 @@ import calc from './calculatorHelper.js';
 
 
 class LoanCalculator {
-    constructor(loanAmount, loanRate, loanTerm) {
-        this.loanAmount = loanAmount;
-        this.loanRate = loanRate;
-        this.loanTerm = loanTerm;
-
+    constructor() {
         this.bindEvents();
     }
 
@@ -37,6 +33,7 @@ class LoanCalculator {
             return { totalPaid, balance, princeplePaid, interestPaid }
         }()
 
+
         console.log(calc.betterCalculateBalance(values))
 
         let cardData = {
@@ -54,6 +51,8 @@ class LoanCalculator {
 }
 
 class HTML_DOM {
+    //Handle DOM on page
+
     constructor() {
         this.cacheDOM = this.cacheDOM();
 
@@ -166,8 +165,6 @@ class FormElement {
         
         let inputs = inputAndIndex.inputData;
 
-        console.log(inputAndIndex)
-
         for(const [key, value] of Object.entries(this.cacheDOM.inputs)){
             value.value = inputs[key]
         }
@@ -248,11 +245,11 @@ class Term {
     }
 
     editTerm(inputData){
+        //updating term data from form
         this.inputs = inputData;
-
         
+        //updating DOM
         events.emit("UpdatedTerm", this)
-        //Get new outputs
     }
 }
 
@@ -273,7 +270,6 @@ class TermCardModule{
     }
 
     updateTermCard(term){
-        console.log(term)
         let index = term.index;
 
         this.termCards[index].updateContent(term)
@@ -338,7 +334,6 @@ class TermCard {
     }
 
     updateContent(term){   
-        
         //Update input text
         for( const [key, value] of Object.entries(this.cacheDOM.inputs)){
             value.textContent = term.inputs[key]
