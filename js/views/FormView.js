@@ -10,7 +10,7 @@ export class FormView {
     cacheDOM() {
         const template = document.querySelector("#template-form").content.firstElementChild.cloneNode(true);
         const parent = document.querySelector(".container");
-        parent.appendChild(template);
+        parent.insertBefore(template, parent.firstChild);
 
         return {
             form: template,
@@ -21,7 +21,7 @@ export class FormView {
             inputs: {
                 amount: template.querySelector("#loan-amount"),
                 rate: template.querySelector("#loan-rate"),
-                term: template.querySelector("#loan-term"),
+                termYears: template.querySelector("#loan-term"),
                 termMonths: template.querySelector("#loan-term-months"),
                 payments: template.querySelector("#loan-payments"),
                 paymentFreq: template.querySelector("#loan-payment-freq")
@@ -58,6 +58,7 @@ export class FormView {
     }
 
     populate(inputData) {
+
         for (const [key, input] of Object.entries(this.dom.inputs)) {
             input.value = inputData[key];
         }

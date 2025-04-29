@@ -21,15 +21,40 @@ export class AppController {
     registerEvents() {
         //On save
         events.on("form:save", inputData => {
-            
-            if(this.editing){
+        
+            if(this.editing != null){
+                // Edit existing term
                 this.termsModule.editTerm(this.editing, inputData)
                 this.editing = null;
             } else {
+                // Add new term
                 this.termsModule.addTerm(inputData)
             }
 
             events.emit("form:close")
+        });
+        
+        events.on("model:termCreated", data => {
+            let term = data.term;
+            let index = data.index;
+            this.termCardModule.addCard(term, index)
+        });
+
+        events.on("model:termUpdated", data => {
+            let term = data.term;
+            let index = data.index;
+            this.termCardModule.updateCard(term, index)
+        })
+
+        events.on("term:editIndex", index => {
+            this.editing = index;
+            
+        })
+
+        events.on("term:requestEdit", index => {
+            const term = this.termsModule.getTerm(index);
+            events.emit("form:populate", term);
+            events.emit("form:open");
         });
 
         events.on("form:cancel", () => {

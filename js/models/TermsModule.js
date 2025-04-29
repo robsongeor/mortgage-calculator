@@ -8,8 +8,6 @@ export class TermsModule {
     addTerm(termData) {
         this.terms.push(termData);
         events.emit("model:termCreated", { term: termData, index: this.terms.length - 1 });
-
-        console.log(this.terms)
     }
 
     editTerm(index, updatedTermData) {
@@ -19,6 +17,7 @@ export class TermsModule {
         } else {
             console.warn(`No term found at index ${index} to edit.`);
         }
+
     }
 
     deleteTerm(index) {
@@ -28,6 +27,10 @@ export class TermsModule {
         } else {
             console.warn(`No term found at index ${index} to delete.`);
         }
+    }
+
+    getTerm(index) {
+        return this.terms[index];
     }
 
     getAllTerms() {
