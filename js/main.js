@@ -1,4 +1,4 @@
-import { AppController } from "./controller/AppController.js";
+import { AppController } from "./controllers/AppController.js";
 
 // Start application
 document.addEventListener("DOMContentLoaded", () => {

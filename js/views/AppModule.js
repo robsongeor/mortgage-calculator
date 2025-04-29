@@ -4,15 +4,13 @@ export class AppModule {
     //Handle DOM for the App
     constructor() {
         this.cacheDOM();
-        this.eventListeners();
+        this.bindEventListeners();
     }
 
     cacheDOM() {
         this.buttons = {
             createNew: document.querySelector(".create"),
         };
-
-        return { buttons };
     }
 
     bindEventListeners() {
