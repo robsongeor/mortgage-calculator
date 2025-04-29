@@ -9,7 +9,7 @@ export class AppController {
         this.AppModule = new AppModule();
         this.formView = new FormView();
         this.termsModule = new TermsModule();
-        //this.termCardModule = new TermCardModule();
+        this.termCardModule = new TermCardModule();
         //this.loanCalculator = new LoanCalculator();
 
         this.editing = null; // stores the index of the term to edit, if null used to create new term
