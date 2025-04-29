@@ -65,7 +65,6 @@ export class FormView {
     }
 
     clearAndHide() {
-        console.log("cancel")
         this.clearInputs();
         this.hide();
       }
