@@ -33,47 +33,42 @@ export class AppController {
 
             events.emit("form:close")
         });
+
+        events.on("form:cancel", () => {
+            events.emit("form:close")
+        })
         
+        //Term Created
         events.on("model:termCreated", data => {
             let term = data.term;
             let index = data.index;
             this.termCardModule.addCard(term, index)
         });
 
+        //Term Updated -> update DOM
         events.on("model:termUpdated", data => {
             let term = data.term;
             let index = data.index;
             this.termCardModule.updateCard(term, index)
         })
 
-        events.on("term:editIndex", index => {
-            this.editing = index;
-            
+        //Term Deleted -> update DOM
+        events.on("model:termDeleted", ({index}) => {
+            this.termCardModule.deleteCard(index);
         })
 
+        events.on("term:requestDelete", index =>{
+            this.termsModule.deleteTerm(index);
+        });
+
+        //Request term for form
         events.on("term:requestEdit", index => {
+            console.log("Editting index" + index)
+            this.editing = index;
             const term = this.termsModule.getTerm(index);
             events.emit("form:populate", term);
             events.emit("form:open");
         });
 
-        events.on("form:cancel", () => {
-            events.emit("form:close")
-        })
-
-        // // Forward calculations from terms to calculator
-        // events.on("CreateNewTerm", (inputData) => {
-        //     events.emit("requestCalculator", inputData);
-        // });
-
-        // events.on("EditTerm", ({ inputData }) => {
-        //     events.emit("requestCalculator", inputData);
-        // });
-
-        // // When calculator finishes, augment term
-        // events.on("calculateBalance", (outputs) => {
-        //     // Possibly emit or integrate into card creation/edit
-        //     // Up to you whether to store outputs in model directly
-        // });
     }
 }

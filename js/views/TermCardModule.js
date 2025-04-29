@@ -3,15 +3,15 @@ import events from "../pubsub.js";
 export class TermCardModule {
     constructor() {
         this.container = document.querySelector(".terms-container");
-        this.cards = [];
+
     }
 
     createCard(term, index) {
-       // console.log(term)
-    
+        // console.log(term)
+
         const template = document.querySelector("#template-term-card").content.cloneNode(true);
         const card = template.querySelector(".term-card");
-        
+
         card.dataset.index = index; // store index for reference
 
         const termMonthsString = term.termMonths ? `${term.termMonths} months` : "";
@@ -26,14 +26,12 @@ export class TermCardModule {
 
         // Add event listeners
         card.querySelector(".edit").addEventListener("click", () => {
-            card.querySelector(".edit").addEventListener("click", () => {
-                events.emit("term:editIndex", index); // Set index first
-                events.emit("term:requestEdit", index); // Ask AppController to provide fresh data
-            });
+            events.emit("term:requestEdit", card.dataset.index); // Ask AppController to provide fresh data
+
         });
 
         card.querySelector(".delete").addEventListener("click", () => {
-            events.emit("term:delete", index);
+            events.emit("term:requestDelete", card.dataset.index);
         });
 
         return card;
@@ -65,6 +63,19 @@ export class TermCardModule {
         const card = this.container.querySelector(`[data-index="${index}"]`);
         if (card) {
             this.container.removeChild(card);
+        } else {
+            console.warn(`Card with index ${index} not found in DOM`);
         }
+
+        // Reindex remaining cards
+        const allCards = this.container.querySelectorAll(".term-card");
+        allCards.forEach((card, newIndex) => {
+            card.dataset.index = newIndex;
+        });
+
+
     }
+
+
+
 }
