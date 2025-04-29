@@ -1,3 +1,5 @@
+import events from "../pubsub.js";
+
 export class TermCardModule{
     //Handles the displaying of the terms
     constructor(){
