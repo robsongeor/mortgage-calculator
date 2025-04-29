@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mortgage Calculator</title>
     <script type="module" src="./js/main.js" defer></script>
     <link rel="stylesheet" href="style.css">
-    
+
 </head>
+
 <body>
     <div class="container">
         <button class="create">Create New</button>
+
+        <div class="terms-container"></div>
     </div>
 </body>
+
 </html>
 
 <template id="template-form">
@@ -42,15 +47,12 @@
 
 <template id="template-term-card">
     <div class="term-card">
-        <p class="loan-amount"></p>
-        <p class="loan-rate"></p>
-        <p class="loan-term"></p>
-        <p class="loan-term-months"></p>
-        <p class="loan-payments"></p>
-        <p class="loan-payment-freq"></p>
-
-        <button class="edit-button">Edit</button>
-        <button class="delete-button">Delete</button>
-
+        <p class="amount"></p>
+        <p class="rate"></p>
+        <p class="term-duration"></p>
+        <p class="payments"></p>
+        <p class="freq"></p>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
     </div>
 </template>

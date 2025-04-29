@@ -19,56 +19,39 @@ export class AppController {
     }
 
     registerEvents() {
-        //On save
-        events.on("form:save", inputData => {
+        //Form Events
+        events.on("form:save", inputData => this.handleFormSave(inputData));
+        events.on("form:cancel", () => events.emit("form:close"))
         
-            if(this.editing != null){
-                // Edit existing term
-                this.termsModule.editTerm(this.editing, inputData)
-                this.editing = null;
-            } else {
-                // Add new term
-                this.termsModule.addTerm(inputData)
-            }
+        //Update UI Card Events
+        events.on("model:termCreated", ({term, index}) => this.termCardModule.addCard(term, index));
+        events.on("model:termUpdated", ({term, index}) => this.termCardModule.updateCard(term, index));
+        events.on("model:termDeleted", ({index}) => this.termCardModule.deleteCard(index));
 
-            events.emit("form:close")
-        });
+        //Term Data Modal Events
+        events.on("term:requestDelete", index =>this.termsModule.deleteTerm(index));
+        events.on("term:requestEdit", index => this.handleEditRequest(index));
 
-        events.on("form:cancel", () => {
-            events.emit("form:close")
-        })
-        
-        //Term Created
-        events.on("model:termCreated", data => {
-            let term = data.term;
-            let index = data.index;
-            this.termCardModule.addCard(term, index)
-        });
+    }
 
-        //Term Updated -> update DOM
-        events.on("model:termUpdated", data => {
-            let term = data.term;
-            let index = data.index;
-            this.termCardModule.updateCard(term, index)
-        })
+    handleEditRequest(index){
+        this.editing = index;
+        const term = this.termsModule.getTerm(index);
+        events.emit("form:populate", term);
+        events.emit("form:open");
+    }
 
-        //Term Deleted -> update DOM
-        events.on("model:termDeleted", ({index}) => {
-            this.termCardModule.deleteCard(index);
-        })
+    handleFormSave(inputData) {
+                    
+        if(this.editing != null){
+            // Edit existing term
+            this.termsModule.editTerm(this.editing, inputData)
+            this.editing = null;
+        } else {
+            // Add new term
+            this.termsModule.addTerm(inputData)
+        }
 
-        events.on("term:requestDelete", index =>{
-            this.termsModule.deleteTerm(index);
-        });
-
-        //Request term for form
-        events.on("term:requestEdit", index => {
-            console.log("Editting index" + index)
-            this.editing = index;
-            const term = this.termsModule.getTerm(index);
-            events.emit("form:populate", term);
-            events.emit("form:open");
-        });
-
+        events.emit("form:close")
     }
 }

@@ -3,35 +3,30 @@ import events from "../pubsub.js";
 export class TermCardModule {
     constructor() {
         this.container = document.querySelector(".terms-container");
-
     }
 
     createCard(term, index) {
-        // console.log(term)
 
         const template = document.querySelector("#template-term-card").content.cloneNode(true);
         const card = template.querySelector(".term-card");
 
         card.dataset.index = index; // store index for reference
 
-        const termMonthsString = term.termMonths ? `${term.termMonths} months` : "";
-        const termYearsString = term.termYears == 1 ? `year` : 'years'
-
         // Populate card fields
         card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
         card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
-        card.querySelector(".term-duration").textContent = `Term: ${term.termYears} ${termYearsString} ${termMonthsString}`;
+        card.querySelector(".term-duration").textContent = this.formatTermDuration(term);
         card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
         card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
 
         // Add event listeners
         card.querySelector(".edit").addEventListener("click", () => {
-            events.emit("term:requestEdit", card.dataset.index); // Ask AppController to provide fresh data
+            events.emit("term:requestEdit", Number(card.dataset.index)); // Ask AppController to provide fresh data
 
         });
 
         card.querySelector(".delete").addEventListener("click", () => {
-            events.emit("term:requestDelete", card.dataset.index);
+            events.emit("term:requestDelete", Number(card.dataset.index));
         });
 
         return card;
@@ -47,16 +42,12 @@ export class TermCardModule {
         if (!card) return;
 
 
-        const termMonthsString = term.termMonths ? `${term.termMonths} months` : "";
-        const termYearsString = term.termYears == 1 ? `year` : 'years'
-
         card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
         card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
-        card.querySelector(".term-duration").textContent = `Term: ${term.termYears} ${termYearsString} ${termMonthsString}`;
+        card.querySelector(".term-duration").textContent = this.formatTermDuration(term)
         card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
         card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
 
-        // Update other fields if needed
     }
 
     deleteCard(index) {
@@ -76,6 +67,12 @@ export class TermCardModule {
 
     }
 
+
+    formatTermDuration(term) {
+        const months = term.termMonths ? `${term.termMonths} months` : "";
+        const years = term.termYears === 1 ? "year" : "years";
+        return `Term: ${term.termYears} ${years} ${months}`;
+    }
 
 
 }
