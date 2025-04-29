@@ -2,6 +2,7 @@ import events from "../pubsub.js";
 import { AppModule } from "../views/AppModule.js";
 import { FormView } from "../views/FormView.js";
 import { TermsModule } from "../models/TermsModule.js";
+import {TermCardModule} from "../views/TermCardModule.js"
 
 export class AppController {
     constructor() {
