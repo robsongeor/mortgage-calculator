@@ -11,8 +11,14 @@
 </head>
 
 <body>
+    <header>
+        <h1>Mortgage Calculator</h1>
+
+        <button class="create">Create</button>
+    </header>
+
     <div class="container">
-        <button class="create">Create New</button>
+
 
         <div class="terms-container"></div>
     </div>
@@ -22,26 +28,52 @@
 
 <template id="template-form">
     <div class="input-form">
-        <label for="loan-amount">loan amount</label>
-        <input type="number" name="loan-amount" id="loan-amount">
+        <div class="input-row">
+            <div class="input-cell">
+                <label for="loan-amount">Loan</label>
+                <input type="text" name="loan-amount" id="loan-amount">
+            </div>
 
-        <label for="loan-rate">loan rate</label>
-        <input type="number" name="loan-rate" id="loan-rate">
 
-        <label for="loan-term">loan term</label>
-        <input type="number" name="loan-term" id="loan-term">
+            <div class="input-cell">
+                <label for="loan-rate">Rate</label>
+                <input type="number" name="loan-rate" id="loan-rate">
+            </div>
+        </div>
 
-        <label for="loan-term-months">loan term months</label>
-        <input type="number" name="loan-term-months" id="loan-term-months">
+        <div class="input-row">
+            <div class="input-cell">
+                <label for="loan-term">Term</label>
+                <div class="input-combine">
+                    <input type="text" name="loan-term" id="loan-term">
+                    <p>Years</p>
+                    <input type="number" name="loan-term-months" id="loan-term-months">
+                    <p>Months</p>
+                </div>
 
-        <label for="loan-payments">loan payments</label>
-        <input type="number" name="loan-payments" id="loan-payments">
+            </div>
 
-        <label for="loan-payment-freq">loan payment freq</label>
-        <input type="number" name="loan-payment-freq" id="loan-payment-freq">
+            <div class="input-cell">
+                <label for="loan-payments">loan payments</label>
+                <div class="input-combine">
+                    
+                    <input type="number" name="loan-payments" id="loan-payments">
+                    <!-- <input type="number" name="loan-payment-freq" id="loan-payment-freq"> -->
+                    <select name="loan-payment-freq" id="loan-payment-freq">
+                        <option value="52">Weekly</option>
+                        <option value="26">Fortnightly</option>
+                        <option value="12">Monthly</option>
+                    </select>
+                </div>
+            </div>
 
-        <button class="save">save</button>
-        <button class="cancel">cancel</button>
+
+
+
+        </div>
+
+        <button class="save">Save</button>
+        <button class="cancel">Cancel</button>
     </div>
 </template>
 

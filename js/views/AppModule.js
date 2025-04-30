@@ -18,7 +18,6 @@ export class AppModule {
         if (this.buttons.createNew) {
             this.buttons.createNew.addEventListener("click", () => {
                 events.emit("form:open", true);
-                //events.emit("isCreate", true);
             });
         }
     }

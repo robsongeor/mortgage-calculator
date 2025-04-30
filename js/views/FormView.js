@@ -77,7 +77,7 @@ export class FormView {
     }
 
     show() {
-        this.dom.form.style.display = "block";
+        this.dom.form.style.display = "flex";
     }
 
     hide() {

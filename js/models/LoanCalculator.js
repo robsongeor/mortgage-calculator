@@ -1,5 +1,5 @@
 import events from "../pubsub.js";
-import calc from './calculatorHelper.js';
+import calc from '../calculatorHelper.js';
 
 export class LoanCalculator {
     constructor() {
