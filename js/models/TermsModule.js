@@ -51,15 +51,28 @@ export class TermsModule {
         return [...this.terms];  // Return a copy for safety
     }
 
+    parseLoanInput(input) {
+        return {
+            amount: Number(input.amount),
+            rate: Number(input.rate),
+            termYears: Number(input.termYears),
+            termMonths: Number(input.termMonths),
+            payments: Number(input.payments),
+            paymentFreq: input.paymentFreq
+        };
+    }
+
     calculateTermOutputData(inputData) {
 
-        let test = amortizationAlgorithm(inputData)
+        const parsedInput = this.parseLoanInput(inputData);
+        const test = amortizationAlgorithm(parsedInput);
+
 
         let outputs = {
             interestPaid: 75,
             principlePaid: 100,
             totalPaid: 100,
-            balance: 69
+            balance: test.finalBalance
         }
 
         return outputs;
