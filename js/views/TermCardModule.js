@@ -12,12 +12,7 @@ export class TermCardModule {
 
         card.dataset.index = index; // store index for reference
 
-        // Populate card fields
-        card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
-        card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
-        card.querySelector(".term-duration").textContent = this.formatTermDuration(term);
-        card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
-        card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
+        this.populateCardFields(card, term);
 
         // Add event listeners
         card.querySelector(".edit").addEventListener("click", () => {
@@ -41,12 +36,7 @@ export class TermCardModule {
         const card = this.container.querySelector(`[data-index="${index}"]`);
         if (!card) return;
 
-
-        card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
-        card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
-        card.querySelector(".term-duration").textContent = this.formatTermDuration(term)
-        card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
-        card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
+        this.populateCardFields(card, term);
 
     }
 
@@ -74,5 +64,17 @@ export class TermCardModule {
         return `Term: ${term.termYears} ${years} ${months}`;
     }
 
+    populateCardFields(card, term) {
+        card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
+        card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
+        card.querySelector(".term-duration").textContent = this.formatTermDuration(term);
+        card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
+        card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
+    
+        card.querySelector(".interest-paid").textContent = `Interest Paid: $${term.interestPaid}`;
+        card.querySelector(".principle-paid").textContent = `Priniple Paid: $${term.principlePaid}`;
+        card.querySelector(".total-paid").textContent = `Total Paid: $${term.totalPaid}`;
+        card.querySelector(".balance").textContent = `Balance: $${term.balance}`;
+    }
 
 }

@@ -38,6 +38,7 @@ export class AppController {
     handleEditRequest(index){
         this.editing = index;
         const term = this.termsModule.getTerm(index);
+        console.log(term)
         events.emit("form:populate", term);
         events.emit("form:open");
     }

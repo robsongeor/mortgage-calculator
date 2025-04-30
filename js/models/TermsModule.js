@@ -6,14 +6,22 @@ export class TermsModule {
     }
 
     addTerm(termData) {
-        this.terms.push(termData);
-        events.emit("model:termCreated", { term: termData, index: this.terms.length - 1 });
+        let outputData = this.calculateTermOutputData(termData)
+
+        let newTerm = ({...outputData, ...termData })
+
+        this.terms.push(newTerm);
+        events.emit("model:termCreated", { term: newTerm, index: this.terms.length - 1 });
+        console.log(this.terms)
     }
 
     editTerm(index, updatedTermData) {
         if (this.terms[index]) {
-            this.terms[index] = updatedTermData;
-            events.emit("model:termUpdated", { term: updatedTermData, index });
+            let outputData = this.calculateTermOutputData(updatedTermData)
+            let newTerm = ({...outputData, ...updatedTermData})
+
+            this.terms[index] = newTerm;
+            events.emit("model:termUpdated", { term: newTerm, index });
         } else {
             console.warn(`No term found at index ${index} to edit.`);
         }
@@ -28,7 +36,7 @@ export class TermsModule {
             console.warn(`No term found at index ${index} to delete.`);
         }
 
-        
+
     }
 
     getTerm(index) {
@@ -37,5 +45,18 @@ export class TermsModule {
 
     getAllTerms() {
         return [...this.terms];  // Return a copy for safety
+    }
+
+    calculateTermOutputData(inputData) {
+
+
+        let outputs = {
+            interestPaid: 75,
+            principlePaid: 100,
+            totalPaid: 100,
+            balance: 69
+        }
+
+        return outputs;
     }
 }

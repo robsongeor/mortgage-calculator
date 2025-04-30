@@ -31,13 +31,13 @@
         <div class="input-row">
             <div class="input-cell">
                 <label for="loan-amount">Loan</label>
-                <input type="text" name="loan-amount" id="loan-amount">
+                <input type="text" inputmode="decimal" name="loan-amount" id="loan-amount">
             </div>
 
 
             <div class="input-cell">
                 <label for="loan-rate">Rate</label>
-                <input type="number" name="loan-rate" id="loan-rate">
+                <input type="text" name="loan-rate" id="loan-rate">
             </div>
         </div>
 
@@ -56,7 +56,7 @@
             <div class="input-cell">
                 <label for="loan-payments">loan payments</label>
                 <div class="input-combine">
-                    
+
                     <input type="number" name="loan-payments" id="loan-payments">
                     <!-- <input type="number" name="loan-payment-freq" id="loan-payment-freq"> -->
                     <select name="loan-payment-freq" id="loan-payment-freq">
@@ -79,11 +79,21 @@
 
 <template id="template-term-card">
     <div class="term-card">
-        <p class="amount"></p>
-        <p class="rate"></p>
-        <p class="term-duration"></p>
-        <p class="payments"></p>
-        <p class="freq"></p>
+        <div class="inputs">
+
+            <p class="amount"></p>
+            <p class="rate"></p>
+            <p class="term-duration"></p>
+            <p class="payments"></p>
+            <p class="freq"></p>
+        </div>
+        <div class="outputs">
+            <p class="interest-paid"></p>
+            <p class="principle-paid"></p>
+            <p class="total-paid"></p>
+            <p class="balance"></p>
+        </div>
+
         <button class="edit">Edit</button>
         <button class="delete">Delete</button>
     </div>

@@ -142,3 +142,13 @@ button {
     align-items: end;
 }
 
+.term-card {
+    padding: 1rem 0 ;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-light);
+    font-variation-settings: "wght" var(--font-weight-light);
+}
+
+.term-card>.inputs, .term-card>.outputs{
+    padding: 1rem 0;
+}
