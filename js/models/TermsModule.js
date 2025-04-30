@@ -1,4 +1,5 @@
 import events from "../pubsub.js";
+import { amortizationAlgorithm } from "../../amortizationHelper.js";
 
 export class TermsModule {
     constructor() {
@@ -6,9 +7,8 @@ export class TermsModule {
     }
 
     addTerm(termData) {
-        let outputData = this.calculateTermOutputData(termData)
 
-        let newTerm = ({...outputData, ...termData })
+        const newTerm = this.buildTerm(termData);
 
         this.terms.push(newTerm);
         events.emit("model:termCreated", { term: newTerm, index: this.terms.length - 1 });
@@ -17,8 +17,7 @@ export class TermsModule {
 
     editTerm(index, updatedTermData) {
         if (this.terms[index]) {
-            let outputData = this.calculateTermOutputData(updatedTermData)
-            let newTerm = ({...outputData, ...updatedTermData})
+            const newTerm = this.buildTerm(updatedTermData);
 
             this.terms[index] = newTerm;
             events.emit("model:termUpdated", { term: newTerm, index });
@@ -26,6 +25,11 @@ export class TermsModule {
             console.warn(`No term found at index ${index} to edit.`);
         }
 
+    }
+
+    buildTerm(termData) {
+        const outputData = this.calculateTermOutputData(termData);
+        return { ...termData, ...outputData };
     }
 
     deleteTerm(index) {
@@ -49,6 +53,7 @@ export class TermsModule {
 
     calculateTermOutputData(inputData) {
 
+        let test = amortizationAlgorithm(inputData)
 
         let outputs = {
             interestPaid: 75,

@@ -182,7 +182,7 @@ const calc = (function () {
     }
 
     const getTotalDaysInYear = function (year) {
-        return isLeapYear ? 366 : 365;
+        return isLeapYear(year) ? 366 : 365;
     }
 
     const isLeapYear = (year) => {

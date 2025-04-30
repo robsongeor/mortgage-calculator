@@ -52,7 +52,7 @@ export class FormView {
     getInputData() {
         const data = {};
         for (const [key, input] of Object.entries(this.dom.inputs)) {
-            data[key] = Number(input.value);
+            data[key] = input.value;
         }
         return data;
     }
