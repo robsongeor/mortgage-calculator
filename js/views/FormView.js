@@ -59,6 +59,16 @@ export class FormView {
 
     handleSave() {
         const inputData = this.getInputData();
+
+        //Check inputs are valid
+        for(const [key, value] of Object.entries(inputData)){
+            if(value.trim() === ""){
+                console.error(`${key} cannot be empty`)
+                return;
+            }
+        }
+
+        
         events.emit("form:save", inputData);  // Controller will listen and decide what to do
     }
 
