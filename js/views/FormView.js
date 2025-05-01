@@ -49,6 +49,19 @@ export class FormView {
 
         // Cursor shifting
         this.dom.inputs.rate.addEventListener("click", this.handleCursorShift.bind(this));
+
+        // Remove error class
+        Object.values(this.dom.inputs).forEach(input => {
+            input.addEventListener("input", () => {
+                let parent = input.parentNode;
+
+                while (parent && !parent.classList.contains("input-cell")) {
+                    parent = parent.parentNode;
+                }
+
+                parent.classList.remove("input-error");
+            });
+        });
     }
 
     bindEvents() {
@@ -59,17 +72,33 @@ export class FormView {
 
     handleSave() {
         const inputData = this.getInputData();
-
-        //Check inputs are valid
-        for(const [key, value] of Object.entries(inputData)){
-            if(value.trim() === ""){
-                console.error(`${key} cannot be empty`)
-                return;
+        let hasError = false;
+    
+        // Clear all previous errors
+        const inputCells = this.dom.form.querySelectorAll(".input-cell");
+        inputCells.forEach(cell => cell.classList.remove("input-error"));
+    
+        // Group inputs by parent cell
+        const invalidParents = new Set();
+    
+        for (const [key, input] of Object.entries(this.dom.inputs)) {
+            const value = inputData[key].trim();
+    
+            const parent = input.closest(".input-cell");
+            if (!parent) continue;
+    
+            if (value === "") {
+                invalidParents.add(parent); // Track parents with any invalid inputs
+                hasError = true;
             }
         }
-
-        
-        events.emit("form:save", inputData);  // Controller will listen and decide what to do
+    
+        // Add error class to invalid parents
+        invalidParents.forEach(parent => parent.classList.add("input-error"));
+    
+        if (hasError) return;
+    
+        events.emit("form:save", inputData);
     }
 
     handleCancel() {
