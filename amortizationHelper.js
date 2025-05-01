@@ -24,10 +24,18 @@ export function amortizationAlgorithm({
     let paymentCount = 0;
 
     let currentDate = new Date(startDate);
-    let daysElapsed = 0;
+    let daysElapsed = 1;
     let interestAccrued = 0;
 
+    let totalPaymentsAmount = 0;
+
     while (paymentCount < totalPayments) {
+        // Accrue interest
+        const dailyInterest = getDailyInterest(rate, balance);
+        interestAccrued += dailyInterest;
+        totalInterest += dailyInterest;
+
+
         // Add interest at the start of each month
         if (currentDate.getDate() === 1) {
             balance += interestAccrued;
@@ -35,29 +43,31 @@ export function amortizationAlgorithm({
             if (balance <= 0) break;
 
             if (paymentFreq === "monthly") {
+                totalPaymentsAmount += paymentAmount;
                 ({ balance, paymentCount } = applyPayment(balance, paymentAmount, paymentCount));
             }
         }
         // Weekly or Fortnightly Payments
         else if (paymentFreq === "weekly" && daysElapsed % 7 === 0) {
+            totalPaymentsAmount += paymentAmount;
             ({ balance, paymentCount } = applyPayment(balance, paymentAmount, paymentCount));
         } else if (paymentFreq === "fortnightly" && daysElapsed % 14 === 0) {
+            totalPaymentsAmount += paymentAmount;
             ({ balance, paymentCount } = applyPayment(balance, paymentAmount, paymentCount));
         }
-
-        // Accrue interest
-        const dailyInterest = getDailyInterest(rate, balance);
-        interestAccrued += dailyInterest;
-        totalInterest += dailyInterest;
 
         // Advance time
         daysElapsed++;
         currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
     }
 
+
+
     return {
         finalBalance: Math.max(0, roundToCents(balance)),
-        totalInterest: roundToCents(totalInterest),
+        totalInterest: roundToCents(totalPaymentsAmount - (loanAmount - balance)),
+        totalPayments: totalPaymentsAmount,
+        totalPrinciple: roundToCents(loanAmount - balance),
         paymentsMade: paymentCount
     };
 }

@@ -69,9 +69,9 @@ export class TermsModule {
 
 
         let outputs = {
-            interestPaid: 75,
-            principlePaid: 100,
-            totalPaid: 100,
+            interestPaid: test.totalInterest,
+            principlePaid: test.totalPrinciple,
+            totalPaid: test.totalPayments,
             balance: test.finalBalance
         }
 
