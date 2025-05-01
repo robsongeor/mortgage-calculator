@@ -32,6 +32,8 @@ export class FormView {
     bindDOMEvents() {
         this.dom.buttons.save.addEventListener("click", this.handleSave.bind(this));
         this.dom.buttons.cancel.addEventListener("click", this.handleCancel.bind(this));
+    
+        
     }
 
     bindEvents() {
