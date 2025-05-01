@@ -53,13 +53,8 @@ export class FormView {
         // Remove error class
         Object.values(this.dom.inputs).forEach(input => {
             input.addEventListener("input", () => {
-                let parent = input.parentNode;
+                this.setInputError(input, false);
 
-                while (parent && !parent.classList.contains("input-cell")) {
-                    parent = parent.parentNode;
-                }
-
-                parent.classList.remove("input-error");
             });
         });
     }
@@ -73,31 +68,32 @@ export class FormView {
     handleSave() {
         const inputData = this.getInputData();
         let hasError = false;
-    
+
         // Clear all previous errors
         const inputCells = this.dom.form.querySelectorAll(".input-cell");
         inputCells.forEach(cell => cell.classList.remove("input-error"));
-    
+
         // Group inputs by parent cell
         const invalidParents = new Set();
-    
+
         for (const [key, input] of Object.entries(this.dom.inputs)) {
             const value = inputData[key].trim();
-    
+
             const parent = input.closest(".input-cell");
             if (!parent) continue;
-    
+
             if (value === "") {
+                this.setInputError(input, true);
                 invalidParents.add(parent); // Track parents with any invalid inputs
                 hasError = true;
             }
         }
-    
+
         // Add error class to invalid parents
         invalidParents.forEach(parent => parent.classList.add("input-error"));
-    
+
         if (hasError) return;
-    
+
         events.emit("form:save", inputData);
     }
 
@@ -190,6 +186,12 @@ export class FormView {
                 input.value.replace(/[$,%]/g, "")
             ])
         );
+    }
+
+    setInputError(input, isError) {
+        const parent = input.closest(".input-cell");
+        if (!parent) return;
+        parent.classList.toggle("input-error", isError);
     }
 
     populate(inputData) {
