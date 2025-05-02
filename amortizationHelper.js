@@ -3,6 +3,7 @@ export function amortizationAlgorithm({
     rate,
     termYears,
     termMonths,
+    startDate: termStartDate,
     payments: paymentAmount,
     paymentFreq
 }) {
@@ -11,11 +12,12 @@ export function amortizationAlgorithm({
         rate,
         termYears,
         termMonths,
+        termStartDate,
         payments: paymentAmount,
         paymentFreq
     });
 
-    const startDate = new Date();
+    const startDate = new Date(termStartDate);
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
     const totalPayments = getTotalPayments(paymentFreq, startDate, endDate);
 
@@ -123,4 +125,3 @@ const input = {
     paymentFreq: "weekly",
 };
 
-console.log(amortizationAlgorithm(input));

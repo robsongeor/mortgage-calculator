@@ -12,7 +12,7 @@ export class TermsModule {
 
         this.terms.push(newTerm);
         events.emit("model:termCreated", { term: newTerm, index: this.terms.length - 1 });
-        console.log(this.terms)
+        
     }
 
     editTerm(index, updatedTermData) {
@@ -57,6 +57,7 @@ export class TermsModule {
             rate: Number(input.rate),
             termYears: Number(input.termYears),
             termMonths: Number(input.termMonths),
+            startDate: input.startDate,
             payments: Number(input.payments),
             paymentFreq: input.paymentFreq
         };
@@ -66,6 +67,8 @@ export class TermsModule {
 
         const parsedInput = this.parseLoanInput(inputData);
         const test = amortizationAlgorithm(parsedInput);
+
+        console.log(parsedInput)
 
 
         let outputs = {
