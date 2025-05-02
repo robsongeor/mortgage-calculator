@@ -104,6 +104,7 @@ button {
 
 .term-card {
     margin-bottom: 1rem;
+    margin-right: 1rem;
     padding: 1rem;
     background-color: #e7e7e7;
     border-radius: 1rem;
@@ -120,3 +121,18 @@ button {
     border: 2px solid red;
     outline: none;
 }
+
+
+.term-row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+/* h2 {
+    font-size: .7rem;
+}
+
+h3 {
+    font-size: .5rem;
+} */
+

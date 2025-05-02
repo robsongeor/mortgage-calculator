@@ -114,7 +114,20 @@ export class AppController {
               termMonths: 0,
               payments: 190,
               paymentFreq: "fortnightly"
-            }
+            },
+            {
+              "amount": "500000",
+              "rate": "5",
+              "termYears": "0",
+              "termMonths": "6",
+              "startDate": "2026-08-01",
+              "payments": "650",
+              "paymentFreq": "weekly",
+              "interestPaid": 12597.99,
+              "principlePaid": 4302.01,
+              "totalPaid": 16900,
+              "balance": 495697.99
+          }
           ];
           
 

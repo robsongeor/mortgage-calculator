@@ -25,7 +25,24 @@ export class TermCardModule {
             events.emit("term:requestDelete", Number(card.dataset.index));
         });
 
+        // Width per loan month (in rem)
+        const widthPerMonth = 2;
+
+        // Add 1rem extra for each month beyond the first
+        const totalMonths = this.getLoanDurationInMonths(term);
+        const baseWidth = totalMonths * widthPerMonth;
+        const adjustedWidth = baseWidth + (totalMonths > 1 ? totalMonths - 1 : 0);
+
+        // Set width styles
+        const cardWidth = `${adjustedWidth}rem`;
+        card.style.minWidth = cardWidth;
+        card.style.inlineSize = cardWidth;
+
         return card;
+    }
+
+    getLoanDurationInMonths(term) {
+        return Number(term.termYears) * 12 + Number(term.termMonths);
     }
 
     renderCards(terms) {
@@ -51,7 +68,7 @@ export class TermCardModule {
 
     }
 
-    createRowContainer(index){
+    createRowContainer(index) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("term-row", `term-row-${index}`);
         return rowDiv;
@@ -102,8 +119,10 @@ export class TermCardModule {
 
     formatTermDuration(term) {
         const months = Number(term.termMonths) !== 0 ? `${term.termMonths} months` : "";
-        const years = Number(term.termYears) === 1 ? "year" : "years";
-        return `${term.termYears} ${years} ${months}`;
+        const yearsString = Number(term.termYears) === 1 ? "year" : "years";
+        const years = Number(term.termYears) !== 0 ? `${term.termYears} ${yearsString}` : "";
+
+        return `${years} ${months}`;
     }
 
     populateCardFields(card, term) {
