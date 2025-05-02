@@ -32,14 +32,6 @@ export class TermCardModule {
         this.container.appendChild(card);
     }
 
-    updateCard(term, index) {
-        const card = this.container.querySelector(`[data-index="${index}"]`);
-        if (!card) return;
-
-        this.populateCardFields(card, term);
-
-    }
-
     renderCards(terms) {
         //Remove all cards,
         this.container.innerHTML = ""
