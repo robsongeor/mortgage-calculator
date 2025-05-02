@@ -120,6 +120,6 @@ export class AppController {
 
         testTerms.forEach((term) => this.termsModule.addTerm(term))
 
-        this.termCardModule.groupByNonOverlappingDates(testTerms)
+        //this.termCardModule.groupByNonOverlappingDates(testTerms)
     }
 }

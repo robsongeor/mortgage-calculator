@@ -3,8 +3,7 @@
 * {
     margin: 0;
     padding: 0;
-   
-   
+    box-sizing: border-box;
 }
 
 :root {
@@ -13,11 +12,10 @@
     --color-light: rgb(255, 255, 255);
     --color-primary: #b64300;
 
-    /* Tpyography */
+    /* Typography */
     --font-weight-bold: 600;
     --font-weight-normal: 450;
     --font-weight-light: 350;
-
     --font-size-small: .8rem;
     --font-size-regular: 1rem;
     --font-size-large: 1.5rem;
@@ -31,105 +29,72 @@ html, body {
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-weight: var(--font-weight-bold);
-    font-style: normal;
-    font-variation-settings: "wght" var(--font-weight-bold);
-
     color: var(--color-dark);
-
-    
+    padding: 0 1rem;
 }
 
 h1 {
-    display: block;
     color: var(--color-primary);
-}
-
-body {
-    padding: 0rem 1rem;
-}
-
-.input-form{
-    /* display: none; */
 }
 
 header {
     height: 4rem;
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: space-between;
-    
 }
 
 button {
     all: unset;
     cursor: pointer;
-
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
     font-variation-settings: "wght" var(--font-weight-bold);
-
-    /* background-color: var(--color-primary);
-    color: var(--color-light) ; */
-
     color: var(--color-primary);
     border: 1px solid var(--color-primary);
-
-    border-radius: .5rem;
+    border-radius: var(--border-radius-regular);
     padding: .5rem 1rem;
 }
 
 .input-form {
     display: flex;
     flex-direction: column;
-    
     gap: 1rem;
-
-    padding: 1rem 0rem;
-    
+    padding: 1rem 0;
 }
 
 .input-row {
     display: flex;
     gap: 1rem;
-
-  
 }
 
 .input-cell {
     display: flex;
     flex-direction: column;
-    
     width: 50%;
-
     border: 1px solid black;
     padding: .5rem 1rem;
 }
 
 .input-cell label {
-
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-light);
     font-variation-settings: "wght" var(--font-weight-light);
- 
     padding-bottom: .25rem;
 }
 
 .input-cell input {
     all: unset;
-    cursor:text;
+    cursor: text;
     width: 100%;
-    box-sizing: border-box;
-  
     font-size: var(--font-size-regular);
-
-    
 }
 
 .input-cell p {
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-light);
     font-variation-settings: "wght" var(--font-weight-light);
-    padding: 0rem 1rem;
+    padding: 0 1rem;
 }
 
 .input-combine {
@@ -139,7 +104,7 @@ button {
 
 .term-card {
     margin-bottom: 1rem;
-    padding: 1rem 1rem ;
+    padding: 1rem;
     background-color: #e7e7e7;
     border-radius: 1rem;
     font-size: var(--font-size-small);
@@ -147,8 +112,8 @@ button {
     font-variation-settings: "wght" var(--font-weight-light);
 }
 
-.term-card>.inputs, .term-card>.outputs{
-    padding-bottom: 1rem ;
+.term-card > .inputs, .term-card > .outputs {
+    padding-bottom: 1rem;
 }
 
 .input-error {

@@ -3,6 +3,7 @@ import events from "../pubsub.js";
 export class TermCardModule {
     constructor() {
         this.container = document.querySelector(".terms-container");
+        this.rows = [];
     }
 
     createCard(term, index) {
@@ -37,54 +38,66 @@ export class TermCardModule {
     }
 
     renderCards(terms) {
-        //Remove all cards,
+        // Clear existing cards
         this.container.innerHTML = ""
 
-        //append all cards - deleted 
-        if (Array.isArray(terms) && terms.length) {
-            terms.forEach((term, index) => this.addCard(term, index));
-        }
+        // Group terms into rows
+        this.rows = this.groupByNonOverlappingDates(terms)
 
+        //For each row create new row-container
+        this.rows.forEach((row, index) => {
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add("term-row", `term-row-${index}`);
+
+            row.forEach(term => {
+                const termsIndex = terms.indexOf(term); //Orginal index (ID)
+                const card = this.createCard(term, termsIndex);
+
+                rowDiv.appendChild(card);
+            })
+
+            this.container.appendChild(rowDiv);
+        })
 
     }
 
     groupByNonOverlappingDates(terms) {
         const rows = [];
         const sorted = [...terms].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-      
-        for (const term of sorted) {
-          const termStart = new Date(term.startDate);
-          const termEnd = this.getEndDate(term);
-      
-          const row = this.findAvailableRow(termStart, termEnd, rows);
 
-          if (row) {
-            row.push(term);
-          } else {
-            rows.push([term]);
-          }
+        for (const term of sorted) {
+            const termStart = new Date(term.startDate);
+            const termEnd = this.getEndDate(term);
+
+            const row = this.findAvailableRow(termStart, termEnd, rows);
+
+            if (row) {
+                row.push(term);
+            } else {
+                rows.push([term]);
+            }
         }
         console.log(rows)
         return rows;
-      }
-      
-      findAvailableRow(termStart, termEnd, rows) {
+    }
+
+    findAvailableRow(termStart, termEnd, rows) {
         for (const row of rows) {
-          const hasOverlap = row.some(existing => this.datesOverlap(
-            termStart, termEnd,
-            new Date(existing.startDate),
-            this.getEndDate(existing)
-          ));
-      
-          if (!hasOverlap) return row;
+            const hasOverlap = row.some(existing => this.datesOverlap(
+                termStart, termEnd,
+                new Date(existing.startDate),
+                this.getEndDate(existing)
+            ));
+
+            if (!hasOverlap) return row;
         }
-      
+
         return null;
-      }
-      
-      datesOverlap(startA, endA, startB, endB) {
+    }
+
+    datesOverlap(startA, endA, startB, endB) {
         return startA < endB && startB < endA;
-      }
+    }
 
 
     formatTermDuration(term) {
