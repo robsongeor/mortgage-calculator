@@ -59,22 +59,63 @@ export class TermCardModule {
 
 
     formatTermDuration(term) {
-        const months = term.termMonths ? `${term.termMonths} months` : "";
-        const years = term.termYears === 1 ? "year" : "years";
-        return `Term: ${term.termYears} ${years} ${months}`;
+
+
+        const months = Number(term.termMonths) !== 0 ? `${term.termMonths} months` : "";
+        const years = Number(term.termYears) === 1 ? "year" : "years";
+        return `${term.termYears} ${years} ${months}`;
     }
 
     populateCardFields(card, term) {
-        card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
-        card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
-        card.querySelector(".term-duration").textContent = this.formatTermDuration(term);
-        card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
-        card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
-    
+        card.querySelector(".loan-title").textContent = this.getTitleString(term)
+        card.querySelector(".loan-dates").textContent = this.getLoanDatesString(term)
+
+        //card.querySelector(".amount").textContent = `Amount: $${term.amount}`;
+        //card.querySelector(".rate").textContent = `Rate: ${term.rate}%`;
+        //card.querySelector(".term-duration").textContent = `Term: ${this.formatTermDuration(term)}`;
+        //card.querySelector(".payments").textContent = `Payments: ${term.payments}`;
+        //card.querySelector(".freq").textContent = `Frequency: ${term.paymentFreq}`;
+
         card.querySelector(".interest-paid").textContent = `Interest Paid: $${term.interestPaid}`;
-        card.querySelector(".principle-paid").textContent = `Priniple Paid: $${term.principlePaid}`;
+        card.querySelector(".principle-paid").textContent = `Principle Paid: $${term.principlePaid}`;
         card.querySelector(".total-paid").textContent = `Total Paid: $${term.totalPaid}`;
         card.querySelector(".balance").textContent = `Balance: $${term.balance}`;
+    }
+
+    getLoanDatesString(term) {
+ 
+        const startDate = new Date(term.startDate);
+
+        const years = Number(term.termYears);
+        const months = Number(term.termMonths);
+
+        const endDate = new Date(
+            startDate.getFullYear() + years,
+            startDate.getMonth() + months,
+            startDate.getDate()
+        )
+
+        const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+
+        return `From ${startDate.toLocaleDateString(undefined, options)} till ${endDate.toLocaleDateString(undefined, options)}`
+    }
+
+    getTitleString(term) {
+        const amountNumeric = parseInt(term.amount, 10);
+
+        const formattedAmount = amountNumeric.toLocaleString("en-NZ", {
+            style: "currency",
+            currency: "NZD",
+            minimumFractionDigits: 0
+        });
+
+        const duration = this.formatTermDuration(term);
+
+        return `${formattedAmount} fixed at ${term.rate}% for ${duration}`
     }
 
 }

@@ -64,12 +64,8 @@ export class TermsModule {
     }
 
     calculateTermOutputData(inputData) {
-
         const parsedInput = this.parseLoanInput(inputData);
         const test = amortizationAlgorithm(parsedInput);
-
-        console.log(parsedInput)
-
 
         let outputs = {
             interestPaid: test.totalInterest,

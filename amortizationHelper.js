@@ -7,15 +7,6 @@ export function amortizationAlgorithm({
     payments: paymentAmount,
     paymentFreq
 }) {
-    console.log({
-        amount: loanAmount,
-        rate,
-        termYears,
-        termMonths,
-        termStartDate,
-        payments: paymentAmount,
-        paymentFreq
-    });
 
     const startDate = new Date(termStartDate);
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
