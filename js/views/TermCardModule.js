@@ -28,29 +28,19 @@ export class TermCardModule {
         return card;
     }
 
-    addCard(term, index) {
-        const card = this.createCard(term, index);
-
-        //Layout here
-
-
-        this.container.appendChild(card);
-    }
-
     renderCards(terms) {
         // Clear existing cards
-        this.container.innerHTML = ""
+        this.container.innerHTML = "";
 
         // Group terms into rows
-        this.rows = this.groupByNonOverlappingDates(terms)
+        this.rows = this.groupByNonOverlappingDates(terms);
 
         //For each row create new row-container
         this.rows.forEach((row, index) => {
-            const rowDiv = document.createElement("div");
-            rowDiv.classList.add("term-row", `term-row-${index}`);
+            const rowDiv = this.createRowContainer(index);
 
             row.forEach(term => {
-                const termsIndex = terms.indexOf(term); //Orginal index (ID)
+                const termsIndex = this.getOriginalIndex(term, terms);
                 const card = this.createCard(term, termsIndex);
 
                 rowDiv.appendChild(card);
@@ -59,6 +49,16 @@ export class TermCardModule {
             this.container.appendChild(rowDiv);
         })
 
+    }
+
+    createRowContainer(index){
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("term-row", `term-row-${index}`);
+        return rowDiv;
+    }
+
+    getOriginalIndex(term, terms) {
+        return terms.indexOf(term);
     }
 
     groupByNonOverlappingDates(terms) {
@@ -101,8 +101,6 @@ export class TermCardModule {
 
 
     formatTermDuration(term) {
-
-
         const months = Number(term.termMonths) !== 0 ? `${term.termMonths} months` : "";
         const years = Number(term.termYears) === 1 ? "year" : "years";
         return `${term.termYears} ${years} ${months}`;
