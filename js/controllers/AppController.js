@@ -27,7 +27,7 @@ export class AppController {
         //Update UI Card Events
         events.on("model:termCreated", ({term, index}) => this.termCardModule.addCard(term, index));
         events.on("model:termUpdated", ({term, index}) => this.termCardModule.updateCard(term, index));
-        events.on("model:termDeleted", (terms) => this.termCardModule.reRenderCards(terms));
+        events.on("model:termDeleted", (terms) => this.termCardModule.renderCards(terms));
         //events.on("model:termDeleted", (terms) => console.log(terms));
 
         //Term Data Modal Events

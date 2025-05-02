@@ -40,7 +40,7 @@ export class TermCardModule {
 
     }
 
-    reRenderCards(terms) {
+    renderCards(terms) {
         //Remove all cards,
         this.container.innerHTML = ""
 
