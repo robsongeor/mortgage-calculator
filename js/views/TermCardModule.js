@@ -40,21 +40,14 @@ export class TermCardModule {
 
     }
 
-    deleteCard(index) {
-        const card = this.container.querySelector(`[data-index="${index}"]`);
-        if (card) {
-            this.container.removeChild(card);
-        } else {
-            console.warn(`Card with index ${index} not found in DOM`);
+    reRenderCards(terms) {
+        //Remove all cards,
+        this.container.innerHTML = ""
+
+        //append all cards - deleted 
+        if( Array.isArray(terms) || terms.length){
+            terms.forEach((term, index) =>  this.addCard(term, index));
         }
-
-        // Reindex remaining cards
-        const allCards = this.container.querySelectorAll(".term-card");
-        allCards.forEach((card, newIndex) => {
-            card.dataset.index = newIndex;
-        });
-
-
     }
 
 
@@ -83,7 +76,7 @@ export class TermCardModule {
     }
 
     getLoanDatesString(term) {
- 
+
         const startDate = new Date(term.startDate);
 
         const years = Number(term.termYears);

@@ -35,7 +35,9 @@ export class TermsModule {
     deleteTerm(index) {
         if (this.terms[index]) {
             const deletedTerm = this.terms.splice(index, 1)[0];
-            events.emit("model:termDeleted", { term: deletedTerm, index });
+            //events.emit("model:termDeleted", { term: deletedTerm, index });
+            events.emit("model:termDeleted", this.terms);
+            console.log(this.terms)
         } else {
             console.warn(`No term found at index ${index} to delete.`);
         }
