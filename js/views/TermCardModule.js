@@ -41,109 +41,49 @@ export class TermCardModule {
         this.container.innerHTML = ""
 
         //append all cards - deleted 
-        if (Array.isArray(terms) || terms.length) {
+        if (Array.isArray(terms) && terms.length) {
             terms.forEach((term, index) => this.addCard(term, index));
         }
 
 
     }
 
-    layoutCards(terms) {
-        //Sort cards first
-        let sorted = terms.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
-
-        console.table(sorted)
-
-        let rows = [[]]
-
-        //Add fisrt element to first row array.
-        if (terms.length > 0) {
-            rows[0] = Array.from(sorted);
-        }
-        
-        currentIndex = 0;
-        nextIndex = 1;
-
-        //Compare curr to next
-        //if stays, nextIndex++
-        
-
-        for (let row = 0; row < rows.length; row++) {
-            for (let i = 0; i < rows[row].length - 1;) {
-                let nextIndex = 1;
-
-                let currRow = rows[row];
-
-
-                const aStart = new Date(currRow[i].startDate);
-                const bStart = new Date(currRow[i + 1].startDate);
-
-                const aEnd = this.getEndDate(currRow[i]);
-                const bEnd = this.getEndDate(currRow[i + 1]);
-
-                console.log(i);
-
-                if (bStart > aStart && bEnd > aEnd) {
-                   console.log(`${bStart} is > ${aStart} && ${bEnd} is > ${aEnd}`)
-                    i++
-                }
-                else {
-                    //console.log(`${[i]} inside of ${[i+1]}` )
-
-                    if (!Array.isArray(rows[row + 1])) {
-                        rows.push([])
-                    }
-                    
-                    rows[row + 1].push(currRow[i + 1])
-                    currRow.splice((i + 1), 1);
-                    rows[row].splice(i+1, 1)
-
-                    
-                }
-
-
-            }
-        }
-
-        console.table(rows)
-
-    }
-
     groupByNonOverlappingDates(terms) {
         const rows = [];
-      
-        // Sort by startDate first for consistency
         const sorted = [...terms].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
       
-        sorted.forEach(term => {
+        for (const term of sorted) {
           const termStart = new Date(term.startDate);
           const termEnd = this.getEndDate(term);
-          console.log(termEnd)
       
-          let placed = false;
-      
-          // Try to place term into an existing row
-          for (const row of rows) {
-            const hasOverlap = row.some(existing => {
-              const existingStart = new Date(existing.startDate);
-              const existingEnd = this.getEndDate(existing);
-              return termStart < existingEnd && existingStart < termEnd;
-            });
-      
-            if (!hasOverlap) {
-              row.push(term);
-              placed = true;
-              break;
-            }
-          }
-      
-          // If it couldn't be placed, make a new row
-          if (!placed) {
+          const row = this.findAvailableRow(termStart, termEnd, rows);
+
+          if (row) {
+            row.push(term);
+          } else {
             rows.push([term]);
           }
-        });
+        }
         console.log(rows)
         return rows;
+      }
+      
+      findAvailableRow(termStart, termEnd, rows) {
+        for (const row of rows) {
+          const hasOverlap = row.some(existing => this.datesOverlap(
+            termStart, termEnd,
+            new Date(existing.startDate),
+            this.getEndDate(existing)
+          ));
+      
+          if (!hasOverlap) return row;
+        }
+      
+        return null;
+      }
+      
+      datesOverlap(startA, endA, startB, endB) {
+        return startA < endB && startB < endA;
       }
 
 
