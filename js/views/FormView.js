@@ -23,6 +23,7 @@ export class FormView {
                 rate: template.querySelector("#loan-rate"),
                 termYears: template.querySelector("#loan-term"),
                 termMonths: template.querySelector("#loan-term-months"),
+                startDate: template.querySelector("#loan-start-date"),
                 payments: template.querySelector("#loan-payments"),
                 paymentFreq: template.querySelector("#loan-payment-freq")
             }
