@@ -127,8 +127,6 @@ export class TermCardModule {
             startDate.getMonth() + months,
             startDate.getDate()
         )
-
-
     }
 
     getLoanDatesString(term) {
