@@ -25,10 +25,10 @@ export class AppController {
         events.on("form:cancel", () => events.emit("form:close"))
         
         //Update UI Card Events
-        events.on("model:termCreated", ({term, index}) => this.termCardModule.addCard(term, index));
-        events.on("model:termUpdated", ({term, index}) => this.termCardModule.updateCard(term, index));
-        events.on("model:termDeleted", (terms) => this.termCardModule.renderCards(terms));
-        //events.on("model:termDeleted", (terms) => console.log(terms));
+        // events.on("model:termCreated", ({term, index}) => this.termCardModule.addCard(term, index));
+        // events.on("model:termUpdated", ({term, index}) => this.termCardModule.updateCard(term, index));
+        // events.on("model:termDeleted", (terms) => this.termCardModule.renderCards(terms));
+        events.on("model:renderCards", (terms) => this.termCardModule.renderCards(terms));
 
         //Term Data Modal Events
         events.on("term:requestDelete", index =>this.termsModule.deleteTerm(index));

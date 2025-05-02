@@ -11,8 +11,7 @@ export class TermsModule {
         const newTerm = this.buildTerm(termData);
 
         this.terms.push(newTerm);
-        events.emit("model:termCreated", { term: newTerm, index: this.terms.length - 1 });
-        
+        events.emit("model:renderCards", this.terms)
     }
 
     editTerm(index, updatedTermData) {
@@ -20,7 +19,7 @@ export class TermsModule {
             const newTerm = this.buildTerm(updatedTermData);
 
             this.terms[index] = newTerm;
-            events.emit("model:termUpdated", { term: newTerm, index });
+            events.emit("model:renderCards", this.terms)
         } else {
             console.warn(`No term found at index ${index} to edit.`);
         }
@@ -35,8 +34,7 @@ export class TermsModule {
     deleteTerm(index) {
         if (this.terms[index]) {
             const deletedTerm = this.terms.splice(index, 1)[0];
-            //events.emit("model:termDeleted", { term: deletedTerm, index });
-            events.emit("model:termDeleted", this.terms);
+            events.emit("model:renderCards", this.terms)
             console.log(this.terms)
         } else {
             console.warn(`No term found at index ${index} to delete.`);
