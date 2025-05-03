@@ -124,15 +124,12 @@ button {
 
 
 .term-row {
-    display: flex;
-    flex-wrap: nowrap;
-}
-
-/* h2 {
-    font-size: .7rem;
-}
-
-h3 {
-    font-size: .5rem;
-} */
-
+    display: grid;
+    grid-template-columns: repeat(360, 2rem); /* 1 column = 1 month = 2rem wide */
+    /* No gap! Gaps are handled by positioning cards */
+    position: relative;
+  }
+  .term-card {
+    grid-column-start: var(--start);
+    grid-column-end: span var(--duration);
+  }

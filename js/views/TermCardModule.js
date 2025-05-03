@@ -6,7 +6,7 @@ export class TermCardModule {
         this.rows = [];
     }
 
-    createCard(term, index) {
+    createCard(term, index, baseDate) {
 
         const template = document.querySelector("#template-term-card").content.cloneNode(true);
         const card = template.querySelector(".term-card");
@@ -25,18 +25,29 @@ export class TermCardModule {
             events.emit("term:requestDelete", Number(card.dataset.index));
         });
 
-        // Width per loan month (in rem)
-        const widthPerMonth = 2;
+        // // Width per loan month (in rem)
+        // const widthPerMonth = 2;
 
-        // Add 1rem extra for each month beyond the first
+        // // Add 1rem extra for each month beyond the first
+        // const totalMonths = this.getLoanDurationInMonths(term);
+        // const baseWidth = totalMonths * widthPerMonth;
+        // const adjustedWidth = baseWidth + (totalMonths > 1 ? totalMonths - 1 : 0);
+
+        // // Set width styles
+        // const cardWidth = `${adjustedWidth}rem`;
+        // card.style.minWidth = cardWidth;
+        // card.style.inlineSize = cardWidth;
+
+        // Grid positioning
+        const startDate = new Date(term.startDate);
         const totalMonths = this.getLoanDurationInMonths(term);
-        const baseWidth = totalMonths * widthPerMonth;
-        const adjustedWidth = baseWidth + (totalMonths > 1 ? totalMonths - 1 : 0);
 
-        // Set width styles
-        const cardWidth = `${adjustedWidth}rem`;
-        card.style.minWidth = cardWidth;
-        card.style.inlineSize = cardWidth;
+        const monthsFromBase = (startDate.getFullYear() - baseDate.getFullYear()) * 12 +
+            (startDate.getMonth() - baseDate.getMonth());
+
+        card.style.setProperty('--start', monthsFromBase + 1); // 1-based grid
+        card.style.setProperty('--duration', totalMonths);
+
 
         return card;
     }
@@ -52,13 +63,15 @@ export class TermCardModule {
         // Group terms into rows
         this.rows = this.groupByNonOverlappingDates(terms);
 
+        const baseDate = this.getEarliestStartDate(terms);
+
         //For each row create new row-container
         this.rows.forEach((row, index) => {
             const rowDiv = this.createRowContainer(index);
 
             row.forEach(term => {
                 const termsIndex = this.getOriginalIndex(term, terms);
-                const card = this.createCard(term, termsIndex);
+                const card = this.createCard(term, termsIndex, baseDate);
 
                 rowDiv.appendChild(card);
             })
@@ -76,6 +89,12 @@ export class TermCardModule {
 
     getOriginalIndex(term, terms) {
         return terms.indexOf(term);
+    }
+
+    getEarliestStartDate(terms) {
+        return new Date(
+            Math.min(...terms.map(term => new Date(term.startDate)))
+        );
     }
 
     groupByNonOverlappingDates(terms) {
