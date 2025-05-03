@@ -4,28 +4,39 @@ import { getEarliestStartDate, groupByNonOverlappingDates, getOriginalIndex } fr
 export class TermCardModule {
     constructor() {
         this.container = document.querySelector(".terms-container");
-        this.rows = [];
+        //this.rows = [];
     }
 
     renderCards(terms) {
-        this.container.innerHTML = "";
-        this.rows = groupByNonOverlappingDates(terms);
+        this.clearContainer();
+        const rows = groupByNonOverlappingDates(terms);
         const baseDate = getEarliestStartDate(terms);
+        const fragment = document.createDocumentFragment();
 
-        this.rows.forEach((row, rowIndex) => {
+        rows.forEach((row, rowIndex) => {
             const rowDiv = this.createRowContainer(rowIndex);
             row.forEach(term => {
-                const index = getOriginalIndex(term, terms);
-                const card = createTermCard(term, index, baseDate);
-                rowDiv.appendChild(card);
+                this.addTermCardToRow(term, terms, rowDiv, baseDate);
             });
-            this.container.appendChild(rowDiv);
+            fragment.appendChild(rowDiv);
         });
+
+        this.container.appendChild(fragment);
+    }
+
+    clearContainer() {
+        this.container.innerHTML = "";
     }
 
     createRowContainer(index) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("term-row", `term-row-${index}`);
         return rowDiv;
+    }
+
+    addTermCardToRow(term, terms, rowDiv, baseDate) {
+        const index = getOriginalIndex(term, terms);
+        const card = createTermCard(term, index, baseDate);
+        rowDiv.appendChild(card);
     }
 }
