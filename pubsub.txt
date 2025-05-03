@@ -1,0 +1,8 @@
+**pubsub.js**
+Purpose:
+Implements a simple publish-subscribe pattern to decouple module communication.
+
+Responsibilities:
+- Allows modules to subscribe to specific events.
+- Allows modules to emit events without knowing who is listening.
+- Enables event-driven architecture for cleaner code organization.
