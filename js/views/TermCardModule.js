@@ -1,4 +1,5 @@
-import events from "../pubsub.js";
+import { createTermCard } from "./createTermCard.js";
+import { getEarliestStartDate, groupByNonOverlappingDates, getOriginalIndex } from "./termCardUtils.js";
 
 export class TermCardModule {
     constructor() {
@@ -6,79 +7,20 @@ export class TermCardModule {
         this.rows = [];
     }
 
-    createCard(term, index, baseDate) {
-
-        const template = document.querySelector("#template-term-card").content.cloneNode(true);
-        const card = template.querySelector(".term-card");
-
-        card.dataset.index = index; // store index for reference
-
-        this.populateCardFields(card, term);
-
-        // Add event listeners
-        card.querySelector(".edit").addEventListener("click", () => {
-            events.emit("term:requestEdit", Number(card.dataset.index)); // Ask AppController to provide fresh data
-
-        });
-
-        card.querySelector(".delete").addEventListener("click", () => {
-            events.emit("term:requestDelete", Number(card.dataset.index));
-        });
-
-        // // Width per loan month (in rem)
-        // const widthPerMonth = 2;
-
-        // // Add 1rem extra for each month beyond the first
-        // const totalMonths = this.getLoanDurationInMonths(term);
-        // const baseWidth = totalMonths * widthPerMonth;
-        // const adjustedWidth = baseWidth + (totalMonths > 1 ? totalMonths - 1 : 0);
-
-        // // Set width styles
-        // const cardWidth = `${adjustedWidth}rem`;
-        // card.style.minWidth = cardWidth;
-        // card.style.inlineSize = cardWidth;
-
-        // Grid positioning
-        const startDate = new Date(term.startDate);
-        const totalMonths = this.getLoanDurationInMonths(term);
-
-        const monthsFromBase = (startDate.getFullYear() - baseDate.getFullYear()) * 12 +
-            (startDate.getMonth() - baseDate.getMonth());
-
-        card.style.setProperty('--start', monthsFromBase + 1); // 1-based grid
-        card.style.setProperty('--duration', totalMonths);
-
-
-        return card;
-    }
-
-    getLoanDurationInMonths(term) {
-        return Number(term.termYears) * 12 + Number(term.termMonths);
-    }
-
     renderCards(terms) {
-        // Clear existing cards
         this.container.innerHTML = "";
+        this.rows = groupByNonOverlappingDates(terms);
+        const baseDate = getEarliestStartDate(terms);
 
-        // Group terms into rows
-        this.rows = this.groupByNonOverlappingDates(terms);
-
-        const baseDate = this.getEarliestStartDate(terms);
-
-        //For each row create new row-container
-        this.rows.forEach((row, index) => {
-            const rowDiv = this.createRowContainer(index);
-
+        this.rows.forEach((row, rowIndex) => {
+            const rowDiv = this.createRowContainer(rowIndex);
             row.forEach(term => {
-                const termsIndex = this.getOriginalIndex(term, terms);
-                const card = this.createCard(term, termsIndex, baseDate);
-
+                const index = getOriginalIndex(term, terms);
+                const card = createTermCard(term, index, baseDate);
                 rowDiv.appendChild(card);
-            })
-
+            });
             this.container.appendChild(rowDiv);
-        })
-
+        });
     }
 
     createRowContainer(index) {
@@ -86,114 +28,4 @@ export class TermCardModule {
         rowDiv.classList.add("term-row", `term-row-${index}`);
         return rowDiv;
     }
-
-    getOriginalIndex(term, terms) {
-        return terms.indexOf(term);
-    }
-
-    getEarliestStartDate(terms) {
-        return new Date(
-            Math.min(...terms.map(term => new Date(term.startDate)))
-        );
-    }
-
-    groupByNonOverlappingDates(terms) {
-        const rows = [];
-        const sorted = [...terms].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-
-        for (const term of sorted) {
-            const termStart = new Date(term.startDate);
-            const termEnd = this.getEndDate(term);
-
-            const row = this.findAvailableRow(termStart, termEnd, rows);
-
-            if (row) {
-                row.push(term);
-            } else {
-                rows.push([term]);
-            }
-        }
-        console.log(rows)
-        return rows;
-    }
-
-    findAvailableRow(termStart, termEnd, rows) {
-        for (const row of rows) {
-            const hasOverlap = row.some(existing => this.datesOverlap(
-                termStart, termEnd,
-                new Date(existing.startDate),
-                this.getEndDate(existing)
-            ));
-
-            if (!hasOverlap) return row;
-        }
-
-        return null;
-    }
-
-    datesOverlap(startA, endA, startB, endB) {
-        return startA < endB && startB < endA;
-    }
-
-
-    formatTermDuration(term) {
-        const months = Number(term.termMonths) !== 0 ? `${term.termMonths} months` : "";
-        const yearsString = Number(term.termYears) === 1 ? "year" : "years";
-        const years = Number(term.termYears) !== 0 ? `${term.termYears} ${yearsString}` : "";
-
-        return `${years} ${months}`;
-    }
-
-    populateCardFields(card, term) {
-        card.querySelector(".loan-title").textContent = this.getTitleString(term)
-        card.querySelector(".loan-dates").textContent = this.getLoanDatesString(term)
-
-        card.querySelector(".interest-paid").textContent = `Interest Paid: $${term.interestPaid}`;
-        card.querySelector(".principle-paid").textContent = `Principle Paid: $${term.principlePaid}`;
-        card.querySelector(".total-paid").textContent = `Total Paid: $${term.totalPaid}`;
-        card.querySelector(".balance").textContent = `Balance: $${term.balance}`;
-    }
-
-    getEndDate(term) {
-        const startDate = new Date(term.startDate);
-
-        const years = Number(term.termYears);
-        const months = Number(term.termMonths);
-
-        return new Date(
-            startDate.getFullYear() + years,
-            startDate.getMonth() + months,
-            startDate.getDate()
-        )
-    }
-
-    getLoanDatesString(term) {
-
-        const startDate = new Date(term.startDate);
-
-        const endDate = this.getEndDate(term);
-
-        const options = {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        }
-
-        return `From ${startDate.toLocaleDateString(undefined, options)} till ${endDate.toLocaleDateString(undefined, options)}`
-    }
-
-    getTitleString(term) {
-        const amountNumeric = parseInt(term.amount, 10);
-
-        const formattedAmount = amountNumeric.toLocaleString("en-NZ", {
-            style: "currency",
-            currency: "NZD",
-            minimumFractionDigits: 0
-        });
-
-        const duration = this.formatTermDuration(term);
-
-        return `${formattedAmount} fixed at ${term.rate}% for ${duration}`
-    }
-
 }
