@@ -25,7 +25,10 @@ export class FormView {
                 termMonths: template.querySelector("#loan-term-months"),
                 startDate: template.querySelector("#loan-start-date"),
                 payments: template.querySelector("#loan-payments"),
-                paymentFreq: template.querySelector("#loan-payment-freq")
+                paymentFreq: template.querySelector("#loan-payment-freq"),
+                termPayChgAmt: template.querySelector("#payment-change-amount"),
+                termPayChgDate: template.querySelector("#payment-change-date")
+                
             }
         };
     }
@@ -36,7 +39,8 @@ export class FormView {
             payments: this.handleDollarInput,
             rate: this.handlePercentInput,
             termYears: this.handleYearInput,
-            termMonths: this.handleMonthInput
+            termMonths: this.handleMonthInput,
+            termPayChgAmt: this.handleDollarInput
         };
 
         // Buttons
@@ -94,7 +98,6 @@ export class FormView {
         invalidParents.forEach(parent => parent.classList.add("input-error"));
 
         if (hasError) return;
-
         events.emit("form:save", inputData);
     }
 
