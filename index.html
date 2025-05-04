@@ -7,6 +7,8 @@
     <title>Mortgage Calculator</title>
     <script type="module" src="./js/main.js" defer></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
 </head>
 
@@ -20,7 +22,7 @@
     <div class="container">
 
 
-    <div class="terms-container"></div>
+        <div class="terms-container"></div>
     </div>
 </body>
 
@@ -92,24 +94,76 @@
 
 <template id="template-term-card">
     <div class="term-card">
-        <div class="inputs">
-            <h2 class="loan-title"></h2>
-            <h3 class="loan-dates"></h3>
+        <div class="loan-header">
 
-            <p class="amount"></p>
-            <p class="rate"></p>
-            <p class="term-duration"></p>
-            <p class="payments"></p>
-            <p class="freq"></p>
+
+
+            <div class="inputs">
+                <p>Amount</p>
+                <h3 class="loan-amount"></h3>
+                <p>Rate</p>
+                <h3 class="loan-rate"></h3>
+                <p>Term</p>
+                <h3 class="loan-term"></h3>
+
+
+                <!-- <p class="amount"></p>
+                <p class="rate"></p>
+                <p class="term-duration"></p>
+                <p class="payments"></p>
+                <p class="freq"></p> -->
+            </div>
+
+            <div class="loan-buttons">
+                <!-- Edit Button -->
+                <button class="edit">
+                    <span class="material-icons">edit</span>
+                </button>
+
+                <!-- Delete Button -->
+                <button class="delete">
+                    <span class="material-icons">delete</span>
+                </button>
+            </div>
+
         </div>
+
+        <h5 class="loan-dates"></h5>
+
+        <div class="svg-graph"></div>
+
         <div class="outputs">
-            <p class="interest-paid"></p>
-            <p class="principle-paid"></p>
-            <p class="total-paid"></p>
-            <p class="balance"></p>
+            <div class="left">
+                <!-- <p>Interest</p> -->
+                <p class="interest-paid"></p>
+                <!-- <p>Principle</p> -->
+                <p class="principle-paid"></p>
+            </div>
+            <div class="right">
+                <p>Balance</p>
+                <h3 class="balance"></h3>
+            </div>
+            <!-- <p class="total-paid"></p> -->
         </div>
 
-        <button class="edit">Edit</button>
-        <button class="delete">Delete</button>
+
+
+
+
+
+
+
+
+
     </div>
+</template>
+
+<template id="template-card-bar-chart">
+
+    <svg id="svg-bar" width="100%" height="2rem">
+        <rect id="rect-interest" x="0" y="0" width="0" height="2rem" />
+        <rect id="rect-principle" x="0" y="0" width="0" height="2rem" />
+        <rect id="rect-balance" x="0" y="0" width="0" height="2rem" />
+    </svg>
+
 </template>

@@ -4,7 +4,6 @@ import { getEarliestStartDate, groupByNonOverlappingDates, getOriginalIndex } fr
 export class TermCardModule {
     constructor() {
         this.container = document.querySelector(".terms-container");
-        //this.rows = [];
     }
 
     renderCards(terms) {

@@ -8,9 +8,10 @@
 
 :root {
     /* Colors */
-    --color-dark: rgb(31, 31, 31);
-    --color-light: rgb(255, 255, 255);
-    --color-primary: #b64300;
+    --color-dark: #4a4947;
+    --color-light: #f9f7f0;
+    --color-primary: #b17457;
+    --color-med-light: #f1efe6;
 
     /* Typography */
     --font-weight-bold: 600;
@@ -25,12 +26,14 @@
     --border-radius-regular: .5rem;
 }
 
-html, body {
+html,
+body {
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-weight: var(--font-weight-bold);
     color: var(--color-dark);
     padding: 0 1rem;
+    background-color: var(--color-light);
 }
 
 h1 {
@@ -72,8 +75,9 @@ button {
     display: flex;
     flex-direction: column;
     width: 50%;
-    border: 1px solid black;
+    border: 1px solid var(--color-dark);
     padding: .5rem 1rem;
+    border-radius: 0.5rem;
 }
 
 .input-cell label {
@@ -105,31 +109,107 @@ button {
 .term-card {
     margin-bottom: 1rem;
     margin-right: 1rem;
-    padding: 1rem;
-    background-color: #e7e7e7;
-    border-radius: 1rem;
+    background-color: white;
+    color: var(--color-dark);
+    border-radius: .5rem;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-light);
     font-variation-settings: "wght" var(--font-weight-light);
 }
 
-.term-card > .inputs, .term-card > .outputs {
-    padding-bottom: 1rem;
-}
 
 .input-error {
     border: 2px solid red;
     outline: none;
 }
-
+.term-card rect {
+    transition: all 0.4s ease-in-out;
+  }
+  text.svg-label {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none; /* Optional: avoids mouse capture */
+  }
 
 .term-row {
     display: grid;
-    grid-template-columns: repeat(360, 2rem); /* 1 column = 1 month = 2rem wide */
-    /* No gap! Gaps are handled by positioning cards */
+    grid-template-columns: repeat(360, 2rem);
+    /* 1 column = 1 month = 2rem wide */
     position: relative;
-  }
-  .term-card {
+}
+
+.term-card {
     grid-column-start: var(--start);
     grid-column-end: span var(--duration);
-  }
+    padding: .7rem;
+}
+
+.loan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-start;  
+
+    padding-bottom: 0;
+}
+
+.term-card button{
+    background-color: #e6e6e6;
+    color: #4a4947;
+    border-radius: .1rem;
+    height: 1.2rem;
+    width: 1.2rem;
+    padding: 0;
+    border: none;
+}
+
+.term-card p {
+    font-size: .7rem;
+    padding-bottom: .1rem;
+}
+
+.term-card h3 {
+    padding-bottom: 0.2rem;
+    font-weight: 700;
+    font-variation-settings: "wght" 700;
+   
+}
+
+.svg-graph {
+    padding: .7rem 0;
+   
+   
+}
+
+.outputs {
+    display: flex;
+    justify-content: space-between;
+  
+
+
+}
+
+.outputs .right>h3 {
+    padding: 0;
+}
+
+.outputs .right {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.outputs .left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+button .material-icons { 
+    font-size: 1.2rem;
+}
+
+.loan-buttons>button {
+    background-color: transparent;
+
+}

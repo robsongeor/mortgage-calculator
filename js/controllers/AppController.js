@@ -61,73 +61,58 @@ export class AppController {
 
     startWithTest(){
         const testTerms = [
-            {
-              startDate: "2025-01-01",
-              amount: 200000,
-              rate: 5.2,
-              termYears: 2,
-              termMonths: 0,
-              payments: 200,
-              paymentFreq: "weekly"
-            },
-            {
-              startDate: "2025-02-01", // overlaps with 1st
-              amount: 150000,
-              rate: 4.9,
-              termYears: 1,
-              termMonths: 6,
-              payments: 180,
-              paymentFreq: "monthly"
-            },
-            {
-              startDate: "2025-04-01", // overlaps with both above
-              amount: 175000,
-              rate: 5.1,
-              termYears: 1,
-              termMonths: 0,
-              payments: 220,
-              paymentFreq: "fortnightly"
-            },
-            {
-              startDate: "2027-01-01", // no overlap with any
-              amount: 100000,
-              rate: 5.0,
-              termYears: 1,
-              termMonths: 0,
-              payments: 250,
-              paymentFreq: "monthly"
-            },
-            {
-              startDate: "2025-06-01", // overlaps with 1, 2, 3
-              amount: 130000,
-              rate: 5.4,
-              termYears: 2,
-              termMonths: 0,
-              payments: 210,
-              paymentFreq: "weekly"
-            },
-            {
-              startDate: "2028-02-01", // no overlap with anything
-              amount: 110000,
-              rate: 4.7,
-              termYears: 1,
-              termMonths: 0,
-              payments: 190,
-              paymentFreq: "fortnightly"
-            },
-            {
-              "amount": "500000",
-              "rate": "5",
-              "termYears": "0",
-              "termMonths": "6",
-              "startDate": "2026-08-01",
-              "payments": "650",
-              "paymentFreq": "weekly",
-              "interestPaid": 12597.99,
-              "principlePaid": 4302.01,
-              "totalPaid": 16900,
-              "balance": 495697.99
-          }
+          {
+            "amount": "510000",
+            "rate": "6.89",
+            "termYears": "1",
+            "termMonths": "6",
+            "startDate": "2023-09-20",
+            "payments": "770",
+            "paymentFreq": "weekly",
+            "interestPaid": 50464.76,
+            "principlePaid": 9595.24,
+            "totalPaid": 60060,
+            "balance": 500404.76
+        },
+        {
+            "amount": "210000",
+            "rate": "6.69",
+            "termYears": "1",
+            "termMonths": "6",
+            "startDate": "2023-09-20",
+            "payments": "310",
+            "paymentFreq": "weekly",
+            "interestPaid": 20174.05,
+            "principlePaid": 4005.95,
+            "totalPaid": 24180,
+            "balance": 205994.05
+        },
+        {
+            "amount": "500404",
+            "rate": "5.79",
+            "termYears": "0",
+            "termMonths": "6",
+            "startDate": "2025-03-20",
+            "payments": "800",
+            "paymentFreq": "weekly",
+            "interestPaid": 13079.85,
+            "principlePaid": 7720.15,
+            "totalPaid": 20800,
+            "balance": 492683.85
+        },
+        {
+            "amount": "205994",
+            "rate": "6.69",
+            "termYears": "0",
+            "termMonths": "6",
+            "startDate": "2025-03-20",
+            "payments": "560",
+            "paymentFreq": "weekly",
+            "interestPaid": 6151.6,
+            "principlePaid": 8408.4,
+            "totalPaid": 14560,
+            "balance": 197585.6
+        }
           ];
           
 
@@ -136,3 +121,58 @@ export class AppController {
         //this.termCardModule.groupByNonOverlappingDates(testTerms)
     }
 }
+
+[
+  {
+      "amount": "510000",
+      "rate": "6.89",
+      "termYears": "1",
+      "termMonths": "6",
+      "startDate": "2023-09-20",
+      "payments": "770",
+      "paymentFreq": "weekly",
+      "interestPaid": 50464.76,
+      "principlePaid": 9595.24,
+      "totalPaid": 60060,
+      "balance": 500404.76
+  },
+  {
+      "amount": "210000",
+      "rate": "6.69",
+      "termYears": "1",
+      "termMonths": "6",
+      "startDate": "2023-09-20",
+      "payments": "310",
+      "paymentFreq": "weekly",
+      "interestPaid": 20174.05,
+      "principlePaid": 4005.95,
+      "totalPaid": 24180,
+      "balance": 205994.05
+  },
+  {
+      "amount": "500404",
+      "rate": "5.79",
+      "termYears": "0",
+      "termMonths": "6",
+      "startDate": "2025-03-20",
+      "payments": "800",
+      "paymentFreq": "weekly",
+      "interestPaid": 13079.85,
+      "principlePaid": 7720.15,
+      "totalPaid": 20800,
+      "balance": 492683.85
+  },
+  {
+      "amount": "205994",
+      "rate": "6.69",
+      "termYears": "0",
+      "termMonths": "6",
+      "startDate": "2025-03-20",
+      "payments": "560",
+      "paymentFreq": "weekly",
+      "interestPaid": 6151.6,
+      "principlePaid": 8408.4,
+      "totalPaid": 14560,
+      "balance": 197585.6
+  }
+]

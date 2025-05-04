@@ -14,8 +14,16 @@ export function getEndDate(term) {
 export function getLoanDatesString(term) {
     const startDate = new Date(term.startDate);
     const endDate = getEndDate(term);
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return `From ${startDate.toLocaleDateString(undefined, options)} till ${endDate.toLocaleDateString(undefined, options)}`;
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return `${startDate.toLocaleDateString(undefined, options)} to ${endDate.toLocaleDateString(undefined, options)}`;
+}
+
+export function getLocaleDollarString(value){
+    const amountNumeric = parseInt(value, 10);
+    const formattedAmount = amountNumeric.toLocaleString("en-NZ", {
+        style: "currency", currency: "NZD", minimumFractionDigits: 0
+    });
+    return `${formattedAmount}`;
 }
 
 export function getTitleString(term) {
@@ -24,7 +32,12 @@ export function getTitleString(term) {
         style: "currency", currency: "NZD", minimumFractionDigits: 0
     });
     const duration = formatTermDuration(term);
-    return `${formattedAmount} fixed at ${term.rate}% for ${duration}`;
+    return `${formattedAmount}`;
+}
+
+export function getTermString(term) {
+    const duration = formatTermDuration(term);
+    return `${duration}`;
 }
 
 export function formatTermDuration(term) {
