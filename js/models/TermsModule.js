@@ -59,13 +59,17 @@ export class TermsModule {
             termMonths: Number(input.termMonths),
             startDate: input.startDate,
             payments: Number(input.payments),
-            paymentFreq: input.paymentFreq
+            paymentFreq: input.paymentFreq,
+            termPayChgAmt: Number(input.termPayChgAmt),
+            termPayChgDate: input.termPayChgDate
         };
     }
 
     calculateTermOutputData(inputData) {
         const parsedInput = this.parseLoanInput(inputData);
         const test = amortizationAlgorithm(parsedInput);
+
+
 
         let outputs = {
             interestPaid: test.totalInterest,
