@@ -5,6 +5,7 @@ export function amortizationAlgorithm({
     termMonths,
     startDate: termStartDate,
     payments: paymentAmount,
+    scheduledPaymentChanges,
     paymentFreq
 }) {
 
