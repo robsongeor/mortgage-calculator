@@ -5,9 +5,12 @@ export function amortizationAlgorithm({
     termMonths,
     startDate: termStartDate,
     payments: paymentAmount,
-    scheduledPaymentChanges,
-    paymentFreq
+    paymentFreq,
+    termPayChgAmt,
+    termPayChgDate
 }) {
+
+    console.log(termPayChgAmt)
 
     const startDate = new Date(termStartDate);
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
