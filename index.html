@@ -1,3 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator</title>
+    <script type="module" src="./js/main.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <header>
+        <h1>Mortgage Calculator</h1>
+
+        <button class="create">Create</button>
+    </header>
+
+    <div class="container">
+
+
+        <div class="terms-container"></div>
+    </div>
+</body>
+
+</html>
+
 <!-- Mortgage Term Input Form Template -->
 <template id="template-form">
     <div class="input-form">
@@ -96,8 +126,113 @@
             </div>
         </div>
 
+        <!-- Row 4: Scheduled Change to Repayments -->
+        <div class="input-row">
+            <!-- Payment Change Amount-->
+             <div class="input-cell">
+                <label for="payment-change-amount">Payment Amount</label>
+                <input 
+                        type="text" 
+                        inputmode="numeric" 
+                        pattern="\d*" 
+                        placeholder="$" 
+                        name="payment-change-amount" 
+                        id="payment-change-amount" 
+                        value="$650"
+                    >
+
+             </div>
+                
+            <!-- Payment Change  Date -->
+            <div class="input-cell">
+                <label for="payment-change-date">Change Date</label>
+                <input 
+                    type="date" 
+                    name="payment-change-date" 
+                    id="payment-change-date" 
+                    value="2025-01-01"
+                >
+            </div>
+        </div>
+
         <!-- Form Action Buttons -->
         <button class="save">Save</button>
         <button class="cancel">Cancel</button>
     </div>
+</template>
+
+<template id="template-term-card">
+    <div class="term-card">
+        <div class="loan-header">
+
+
+
+            <div class="inputs">
+                <p>Amount</p>
+                <h3 class="loan-amount"></h3>
+                <p>Rate</p>
+                <h3 class="loan-rate"></h3>
+                <p>Term</p>
+                <h3 class="loan-term"></h3>
+
+
+                <!-- <p class="amount"></p>
+                <p class="rate"></p>
+                <p class="term-duration"></p>
+                <p class="payments"></p>
+                <p class="freq"></p> -->
+            </div>
+
+            <div class="loan-buttons">
+                <!-- Edit Button -->
+                <button class="edit">
+                    <span class="material-icons">edit</span>
+                </button>
+
+                <!-- Delete Button -->
+                <button class="delete">
+                    <span class="material-icons">delete</span>
+                </button>
+            </div>
+
+        </div>
+
+        <h5 class="loan-dates"></h5>
+
+        <div class="svg-graph"></div>
+
+        <div class="outputs">
+            <div class="left">
+                <!-- <p>Interest</p> -->
+                <p class="interest-paid"></p>
+                <!-- <p>Principle</p> -->
+                <p class="principle-paid"></p>
+            </div>
+            <div class="right">
+                <p>Balance</p>
+                <h3 class="balance"></h3>
+            </div>
+            <!-- <p class="total-paid"></p> -->
+        </div>
+
+
+
+
+
+
+
+
+
+
+    </div>
+</template>
+
+<template id="template-card-bar-chart">
+
+    <svg id="svg-bar" width="100%" height="2rem">
+        <rect id="rect-interest" x="0" y="0" width="0" height="2rem" />
+        <rect id="rect-principle" x="0" y="0" width="0" height="2rem" />
+        <rect id="rect-balance" x="0" y="0" width="0" height="2rem" />
+    </svg>
+
 </template>
