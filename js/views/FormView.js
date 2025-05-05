@@ -205,9 +205,15 @@ export class FormView {
             rate: this.handlePercentInput
         };
 
-        for (const [key, input] of Object.entries(this.dom.inputs)) {
-            input.value = inputData[key];
+        console.log(inputData)
 
+
+        for (const [key, input] of Object.entries(this.dom.inputs)) {
+            //Skip optional values
+            if(inputData[key]){
+                input.value = inputData[key];
+            }
+            
             //Format required fields
             if (formatters[key]) {
                 formatters[key].call(this, { target: input });
