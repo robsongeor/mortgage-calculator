@@ -109,6 +109,21 @@ export class AppController {
             "principlePaid": 8408.4,
             "totalPaid": 14560,
             "balance": 197585.6
+        },
+        {
+            "amount": "210000",
+            "rate": "6.69",
+            "termYears": "2",
+            "termMonths": "0",
+            "startDate": "2023-09-20",
+            "payments": "310",
+            "paymentFreq": "weekly",
+            "termPayChgAmt": "560",
+            "termPayChgDate": "2025-03-20",
+            "interestPaid": 26449.079999999998,
+            "principlePaid": 12290.919999999998,
+            "totalPaid": 38740,
+            "balance": 407709.07999999996
         }
           ];
           
