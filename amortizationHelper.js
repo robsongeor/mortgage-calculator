@@ -1,70 +1,73 @@
 export function amortizationAlgorithm({
-  amount: loanAmount,
-  rate,
-  termYears,
-  termMonths,
-  startDate: termStartDate,
-  payments: initialPayment,
-  paymentFreq,
-  paymentChanges = [] // array of { date, amount }
-}) {
-  const results = {
-    finalBalance: 0,
-    totalInterest: 0,
-    totalPayments: 0,
-    totalPrinciple: 0,
-    paymentsMade: 0
-  };
+    amount: loanAmount,
+    rate,
+    termYears,
+    termMonths,
+    startDate: termStartDate,
+    payments: initialPayment,
+    paymentFreq,
+    midTerms = [] // array of { date, amount }
+  }) {
+    const results = {
+      finalBalance: 0,
+      totalInterest: 0,
+      totalPayments: 0,
+      totalPrinciple: 0,
+      paymentsMade: 0
+    };
+  
+    const startDate = new Date(termStartDate);
+    const endDate = addYearsAndMonths(startDate, termYears, termMonths);
 
-  const startDate = new Date(termStartDate);
-  const endDate = addYearsAndMonths(startDate, termYears, termMonths);
-
-  const segments = [];
-
-  // Step 1: Build amortization segments based on paymentChanges
-  const sortedChanges = [...paymentChanges].sort((a, b) => new Date(a.date) - new Date(b.date));
-  let segmentStart = startDate;
-  let currentPayment = initialPayment;
-
-  for (let i = 0; i < sortedChanges.length; i++) {
-    const change = sortedChanges[i];
-    const changeDate = new Date(change.date);
-
-    if (changeDate <= segmentStart || changeDate >= endDate) continue;
-
-    segments.push({ start: segmentStart, end: changeDate, payment: currentPayment });
-
-    segmentStart = changeDate;
-    currentPayment = change.amount;
+    console.log(midTerms)
+  
+    const segments = [];
+  
+    // Step 1: Build amortization segments based on paymentChanges
+    const sortedChanges = [...midTerms].sort((a, b) => new Date(a.date) - new Date(b.date));
+    let segmentStart = startDate;
+    let currentPayment = initialPayment;
+  
+    for (let i = 0; i < sortedChanges.length; i++) {
+      const change = sortedChanges[i];
+      const changeDate = new Date(change.date);
+  
+      if (changeDate <= segmentStart || changeDate >= endDate) continue;
+  
+      segments.push({ start: segmentStart, end: changeDate, payment: currentPayment });
+  
+      segmentStart = changeDate;
+      currentPayment = change.amount;
+    }
+  
+    // Final segment
+    segments.push({ start: segmentStart, end: endDate, payment: currentPayment });
+  
+    // Step 2: Calculate each segment
+    let balance = loanAmount;
+  
+    for (const seg of segments) {
+      const result = calculateTerm(balance, rate, seg.start, seg.end, seg.payment, paymentFreq);
+  
+      results.finalBalance = result.finalBalance;
+      results.totalInterest += result.totalInterest;
+      results.totalPayments += result.totalPayments;
+      results.totalPrinciple += result.totalPrinciple;
+      results.paymentsMade += result.paymentsMade;
+  
+      balance = result.finalBalance;
+      if (balance <= 0) break;
+    }
+  
+    return {
+      finalBalance: roundToCents(results.finalBalance),
+      totalInterest: roundToCents(results.totalInterest),
+      totalPayments: roundToCents(results.totalPayments),
+      totalPrinciple: roundToCents(results.totalPrinciple),
+      paymentsMade: results.paymentsMade
+    };
   }
-
-  // Final segment
-  segments.push({ start: segmentStart, end: endDate, payment: currentPayment });
-
-  // Step 2: Calculate each segment
-  let balance = loanAmount;
-
-  for (const seg of segments) {
-    const result = calculateTerm(balance, rate, seg.start, seg.end, seg.payment, paymentFreq);
-
-    results.finalBalance = result.finalBalance;
-    results.totalInterest += result.totalInterest;
-    results.totalPayments += result.totalPayments;
-    results.totalPrinciple += result.totalPrinciple;
-    results.paymentsMade += result.paymentsMade;
-
-    balance = result.finalBalance;
-    if (balance <= 0) break;
-  }
-
-  return {
-    finalBalance: roundToCents(results.finalBalance),
-    totalInterest: roundToCents(results.totalInterest),
-    totalPayments: roundToCents(results.totalPayments),
-    totalPrinciple: roundToCents(results.totalPrinciple),
-    paymentsMade: results.paymentsMade
-  };
-}
+  
 
 
 function calculateTerm(amount, rate, startDate, endDate, payment, paymentFreq) {

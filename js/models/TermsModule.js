@@ -60,16 +60,31 @@ export class TermsModule {
             startDate: input.startDate,
             payments: Number(input.payments),
             paymentFreq: input.paymentFreq,
-            termPayChgAmt: Number(input.termPayChgAmt),
-            termPayChgDate: input.termPayChgDate
         };
+    }
+
+    parseMidTermsInput(array){
+        let parsedArray = array;
+
+        console.log(array)
+
+        parsedArray.forEach(midterm => {
+            midterm.amount = Number(midterm.amount)
+        });
+
+        return parsedArray;
     }
 
     calculateTermOutputData(inputData) {
         const parsedInput = this.parseLoanInput(inputData);
+
+        if(inputData.midTerms){
+            parsedInput.midTerms = this.parseMidTermsInput(inputData.midTerms)
+        }
+
         const test = amortizationAlgorithm(parsedInput);
 
-
+        console.log(inputData)
 
         let outputs = {
             interestPaid: test.totalInterest,

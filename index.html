@@ -126,39 +126,44 @@
             </div>
         </div>
 
-        <!-- Row 4: Scheduled Change to Repayments -->
-        <div class="input-row">
-            <!-- Payment Change Amount-->
-             <div class="input-cell">
-                <label for="payment-change-amount">Payment Amount</label>
-                <input 
-                        type="text" 
-                        inputmode="numeric" 
-                        pattern="\d*" 
-                        placeholder="$" 
-                        name="payment-change-amount" 
-                        id="payment-change-amount" 
-                        value="$650"
-                    >
 
-             </div>
-                
-            <!-- Payment Change  Date -->
-            <div class="input-cell">
-                <label for="payment-change-date">Change Date</label>
-                <input 
-                    type="date" 
-                    name="payment-change-date" 
-                    id="payment-change-date" 
-                    value="2025-01-01"
-                >
-            </div>
-        </div>
 
         <!-- Form Action Buttons -->
+         <button class="add-midterm">Add Midterm</button>
         <button class="save">Save</button>
         <button class="cancel">Cancel</button>
     </div>
+</template>
+
+<template id="template-option-midterm">
+            <!-- Row 4: Scheduled Change to Repayments -->
+            <div class="input-row">
+                <!-- Payment Change Amount-->
+                 <div class="input-cell">
+                    <label for="payment-change-amount">Payment Amount</label>
+                    <input 
+                            type="text" 
+                            inputmode="numeric" 
+                            pattern="\d*" 
+                            placeholder="$" 
+                            name="payment-change-amount" 
+                            id="payment-change-amount" 
+                            value="$650"
+                        >
+    
+                 </div>
+                    
+                <!-- Payment Change  Date -->
+                <div class="input-cell">
+                    <label for="payment-change-date">Change Date</label>
+                    <input 
+                        type="date" 
+                        name="payment-change-date" 
+                        id="payment-change-date" 
+                        value="2025-01-01"
+                    >
+                </div>
+            </div>
 </template>
 
 <template id="template-term-card">

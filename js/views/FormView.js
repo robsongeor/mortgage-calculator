@@ -9,6 +9,7 @@ export class FormView {
 
     cacheDOM() {
         const template = document.querySelector("#template-form").content.firstElementChild.cloneNode(true);
+
         const parent = document.querySelector(".container");
         parent.insertBefore(template, parent.firstChild);
 
@@ -16,7 +17,8 @@ export class FormView {
             form: template,
             buttons: {
                 save: template.querySelector(".save"),
-                cancel: template.querySelector(".cancel")
+                cancel: template.querySelector(".cancel"),
+                addMidterm: template.querySelector(".add-midterm")
             },
             inputs: {
                 amount: template.querySelector("#loan-amount"),
@@ -26,9 +28,9 @@ export class FormView {
                 startDate: template.querySelector("#loan-start-date"),
                 payments: template.querySelector("#loan-payments"),
                 paymentFreq: template.querySelector("#loan-payment-freq"),
-                termPayChgAmt: template.querySelector("#payment-change-amount"),
-                termPayChgDate: template.querySelector("#payment-change-date")
-                
+            },
+            options: {
+                midTerm: []
             }
         };
     }
@@ -40,12 +42,12 @@ export class FormView {
             rate: this.handlePercentInput,
             termYears: this.handleYearInput,
             termMonths: this.handleMonthInput,
-            termPayChgAmt: this.handleDollarInput
         };
 
         // Buttons
         this.dom.buttons.save.addEventListener("click", this.handleSave.bind(this));
         this.dom.buttons.cancel.addEventListener("click", this.handleCancel.bind(this));
+        this.dom.buttons.addMidterm.addEventListener("click", this.createMidTermOption.bind(this))
 
         // Input events 
         for (const [key, handler] of Object.entries(inputBindings)) {
@@ -62,6 +64,22 @@ export class FormView {
 
             });
         });
+    }
+
+    createMidTermOption() {
+        const template = document.querySelector("#template-option-midterm").content.firstElementChild.cloneNode(true);
+
+        // Input events [options]
+        const amount = template.querySelector("#payment-change-amount");
+
+        amount.addEventListener("input", this.handleDollarInput.bind(this))
+
+
+        this.dom.options.midTerm.push(template)
+
+        this.dom.form.insertBefore(template, this.dom.form.querySelector("button"))
+
+        return template;
     }
 
     bindEvents() {
@@ -183,13 +201,30 @@ export class FormView {
     }
 
     getInputData() {
-        //Object to map. returns object
-        return Object.fromEntries(
+        // Extract values from static inputs
+        const staticInputs = Object.fromEntries(
             Object.entries(this.dom.inputs).map(([key, input]) => [
                 key,
                 input.value.replace(/[$,%]/g, "")
             ])
         );
+
+        // Extract values from dynamic midterm inputs        
+        const midTerms = this.dom.options.midTerm.map(option => {
+            const amountInput = option.querySelector("#payment-change-amount");
+            const dateInput = option.querySelector("#payment-change-date");
+
+            return {
+                amount: amountInput?.value.replace(/[$,%]/g, "") || "",
+                date: dateInput?.value || ""
+            };
+        });
+
+        // Add the midterm data to the result
+        return {
+            ...staticInputs,
+            midTerms
+        };
     }
 
     setInputError(input, isError) {
@@ -205,19 +240,28 @@ export class FormView {
             rate: this.handlePercentInput
         };
 
-        console.log(inputData)
-
 
         for (const [key, input] of Object.entries(this.dom.inputs)) {
             //Skip optional values
-            if(inputData[key]){
+            if (inputData[key]) {
                 input.value = inputData[key];
             }
-            
+
             //Format required fields
             if (formatters[key]) {
                 formatters[key].call(this, { target: input });
             }
+        }
+
+        //Add all midterms
+        if(inputData.midTerms){
+            inputData.midTerms.forEach(midTerm =>{
+                const mt = this.createMidTermOption();
+    
+                mt.querySelector("#payment-change-amount").value = midTerm.amount;
+                mt.querySelector("#payment-change-date").value = midTerm.date;
+    
+            })
         }
 
         this.show();
@@ -232,6 +276,12 @@ export class FormView {
         for (const input of Object.values(this.dom.inputs)) {
             input.value = "";
         }
+
+        //Clear midterm options
+        this.dom.options.midTerm.forEach(midterm => {
+            midterm.remove();
+        })
+        this.dom.options.midTerm = [];
     }
 
     show() {
