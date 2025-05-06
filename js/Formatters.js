@@ -74,3 +74,7 @@ export function handleCursorShift(e) {
 export function sanitizeNumber(value) {
     return value.replace(/[^0-9]/g, "");
 }
+
+export function removeSigns(value) {
+    return value.replace(/[$,%]/g, "")
+}
