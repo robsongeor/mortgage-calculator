@@ -1,21 +1,32 @@
 import events from "../pubsub.js";
-import {handleMonthInput,handleYearInput,handleDollarInput,handlePercentInput,handleCursorShift,sanitizeNumber} from "../Formatters.js"
+import {
+    handleMonthInput,
+    handleYearInput,
+    handleDollarInput,
+    handlePercentInput,
+    handleCursorShift,
+    sanitizeNumber
+} from "../Formatters.js"
 
 export class FormView {
     constructor() {
         this.dom = this.cacheDOM();
+        this.render();
         this.bindDOMEvents();
         this.bindEvents();
     }
 
+    render(){
+        this.dom.parent.insertBefore(this.dom.form, this.dom.parent.firstChild);
+    }
+
     cacheDOM() {
         const template = document.querySelector("#template-form").content.firstElementChild.cloneNode(true);
-
         const parent = document.querySelector(".container");
-        parent.insertBefore(template, parent.firstChild);
-
+        
         return {
             form: template,
+            parent,
             buttons: {
                 save: template.querySelector(".save"),
                 cancel: template.querySelector(".cancel"),
@@ -37,34 +48,118 @@ export class FormView {
     }
 
     bindDOMEvents() {
-        const inputBindings = {
+        this.bindInputEvents({
             amount: handleDollarInput,
             payments: handleDollarInput,
             rate: handlePercentInput,
             termYears: handleYearInput,
             termMonths: handleMonthInput,
-        };
+        });
 
-        // Buttons
         this.dom.buttons.save.addEventListener("click", this.handleSave.bind(this));
         this.dom.buttons.cancel.addEventListener("click", this.handleCancel.bind(this));
-        this.dom.buttons.addMidterm.addEventListener("click", this.createMidTermOption.bind(this))
+        this.dom.buttons.addMidterm.addEventListener("click", this.createMidTermOption.bind(this));
+    }
 
-        // Input events 
-        for (const [key, handler] of Object.entries(inputBindings)) {
+    bindInputEvents(bindings) {
+        for (const [key, handler] of Object.entries(bindings)) {
             this.dom.inputs[key].addEventListener("input", handler.bind(this));
         }
 
-        // Cursor shifting
         this.dom.inputs.rate.addEventListener("click", handleCursorShift.bind(this));
 
-        // Remove error class
         Object.values(this.dom.inputs).forEach(input => {
             input.addEventListener("input", () => {
                 this.setInputError(input, false);
-
             });
         });
+    }
+
+    bindEvents() {
+        events.on("form:open", this.show.bind(this));
+        events.on("form:close", this.clearAndHide.bind(this));
+        events.on("form:populate", this.populate.bind(this));
+    }
+
+    handleSave() {
+        const inputData = this.getInputData();
+        this.clearAllInputErrors();
+
+        const invalidInputs = Object.values(this.dom.inputs)
+            .map(input => this.validateRequiredInput(input))
+            .filter(Boolean);
+
+        const midtermErrors = this.dom.options.midTerm.flatMap(option => {
+            const amount = option.querySelector("#payment-change-amount");
+            const date = option.querySelector("#payment-change-date");
+            const errors = [];
+
+            if (!amount.value.trim()) {
+                this.setInputError(amount, true);
+                errors.push(amount);
+            }
+
+            if (!date.value.trim()) {
+                this.setInputError(date, true);
+                errors.push(date);
+            }
+
+            return errors;
+        });
+
+        if (invalidInputs.length || midtermErrors.length) {
+            invalidInputs.forEach(parent => parent.classList.add("input-error"));
+            return;
+        }
+
+        events.emit("form:save", inputData);
+    }
+
+    handleCancel() {
+        events.emit("form:cancel");
+    }
+
+    getInputData() {
+        const staticInputs = Object.fromEntries(
+            Object.entries(this.dom.inputs).map(([key, input]) => [
+                key,
+                input.value.replace(/[$,%]/g, "")
+            ])
+        );
+
+        const midTerms = this.dom.options.midTerm.map(option => {
+            const amountInput = option.querySelector('[data-role="payment-change-amount"]');
+            const dateInput = option.querySelector('[data-role="payment-change-amount"]')
+
+            return {
+                amount: amountInput?.value.replace(/[$,%]/g, "") || "",
+                date: dateInput?.value || ""
+            };
+        });
+
+        return {
+            ...staticInputs,
+            midTerms
+        };
+    }
+
+    validateRequiredInput(input) {
+        const parent = input.closest(".input-cell");
+        const value = input.value.trim();
+        const isEmpty = value === "";
+        this.setInputError(input, isEmpty);
+        return isEmpty ? parent : null;
+    }
+
+    clearAllInputErrors() {
+        const inputCells = this.dom.form.querySelectorAll(".input-cell");
+        inputCells.forEach(cell => cell.classList.remove("input-error"));
+    }
+
+    setInputError(input, isError) {
+        const parent = input.closest(".input-cell");
+        if (!parent) return;
+        parent.classList.toggle("input-error", isError);
     }
 
     createMidTermOption(prefill = { amount: "", date: "" }) {
@@ -81,7 +176,6 @@ export class FormView {
             input.addEventListener("input", () => this.setInputError(input, false));
         });
 
-        // Add remove button logic if exists
         const removeBtn = template.querySelector(".remove-midterm");
         if (removeBtn) {
             removeBtn.addEventListener("click", () => {
@@ -92,123 +186,27 @@ export class FormView {
 
         this.dom.options.midTerm.push(template);
         this.dom.form.insertBefore(template, this.dom.form.querySelector("button.save"));
-
-        // Auto-focus first input
         amount.focus();
 
         return template;
     }
 
-
-    bindEvents() {
-        events.on("form:open", this.show.bind(this));
-        events.on("form:close", this.clearAndHide.bind(this));
-        events.on("form:populate", this.populate.bind(this));
-    }
-
-    handleSave() {
-        const inputData = this.getInputData();
-        let hasError = false;
-
-        // Clear all previous errors
-        const inputCells = this.dom.form.querySelectorAll(".input-cell");
-        inputCells.forEach(cell => cell.classList.remove("input-error"));
-
-        const invalidParents = new Set();
-
-        for (const [key, input] of Object.entries(this.dom.inputs)) {
-            const value = inputData[key].trim();
-            const parent = input.closest(".input-cell");
-            if (!parent) continue;
-
-            if (value === "") {
-                this.setInputError(input, true);
-                invalidParents.add(parent);
-                hasError = true;
-            }
-        }
-
-        // ✅ Validate midterms
-        this.dom.options.midTerm.forEach(option => {
-            const amount = option.querySelector("#payment-change-amount");
-            const date = option.querySelector("#payment-change-date");
-
-            if (!amount.value) {
-                this.setInputError(amount, true);
-                hasError = true;
-            }
-            if (!date.value) {
-                this.setInputError(date, true);
-                hasError = true;
-            }
-        });
-
-        invalidParents.forEach(parent => parent.classList.add("input-error"));
-        if (hasError) return;
-
-        events.emit("form:save", inputData);
-    }
-
-    handleCancel() {
-        events.emit("form:cancel");
-    }
-
-
-
-    getInputData() {
-        // Extract values from static inputs
-        const staticInputs = Object.fromEntries(
-            Object.entries(this.dom.inputs).map(([key, input]) => [
-                key,
-                input.value.replace(/[$,%]/g, "")
-            ])
-        );
-
-        // Extract values from dynamic midterm inputs        
-        const midTerms = this.dom.options.midTerm.map(option => {
-            const amountInput = option.querySelector("#payment-change-amount");
-            const dateInput = option.querySelector("#payment-change-date");
-
-            return {
-                amount: amountInput?.value.replace(/[$,%]/g, "") || "",
-                date: dateInput?.value || ""
-            };
-        });
-
-        // Add the midterm data to the result
-        return {
-            ...staticInputs,
-            midTerms
-        };
-    }
-
-    setInputError(input, isError) {
-        const parent = input.closest(".input-cell");
-        if (!parent) return;
-        parent.classList.toggle("input-error", isError);
-    }
-
     populate(inputData) {
         const formatters = {
-            amount: this.handleDollarInput,
-            payments: this.handleDollarInput,
-            rate: this.handlePercentInput
+            amount: handleDollarInput,
+            payments: handleDollarInput,
+            rate: handlePercentInput
         };
 
-
         for (const [key, input] of Object.entries(this.dom.inputs)) {
-            //Skip optional values
             if (inputData[key]) {
                 input.value = inputData[key];
             }
-
-            //Format required fields
             if (formatters[key]) {
                 formatters[key].call(this, { target: input });
             }
         }
 
-        //Add all midterms
         if (inputData.midTerms) {
             inputData.midTerms.forEach(midTerm => {
                 this.createMidTermOption(midTerm);
@@ -228,10 +226,9 @@ export class FormView {
             input.value = "";
         }
 
-        //Clear midterm options
         this.dom.options.midTerm.forEach(midterm => {
             midterm.remove();
-        })
+        });
         this.dom.options.midTerm = [];
     }
 
