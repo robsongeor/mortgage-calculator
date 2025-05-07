@@ -172,65 +172,59 @@
 
 <template id="template-term-card">
     <div class="term-card">
-        <div class="loan-header">
+        <div class="content">
+            <div class="loan-header">
 
 
 
-            <div class="inputs">
-                <p>Amount</p>
-                <h3 class="loan-amount"></h3>
-                <p>Rate</p>
-                <h3 class="loan-rate"></h3>
-                <p>Term</p>
-                <h3 class="loan-term"></h3>
+                <div class="inputs">
+                    <p>Amount</p>
+                    <h3 class="loan-amount"></h3>
+                    <p>Rate</p>
+                    <h3 class="loan-rate"></h3>
+                    <p>Term</p>
+                    <h3 class="loan-term"></h3>
+                </div>
+    
+                
+    
             </div>
-
-            <div class="loan-buttons">
-                <!-- Edit Button -->
-                <button class="create-from">
-                    <span class="material-icons">library_add</span>
-                </button>
-
-
-                <!-- Edit Button -->
-                <button class="edit">
-                    <span class="material-icons">edit</span>
-                </button>
-
-                <!-- Delete Button -->
-                <button class="delete">
-                    <span class="material-icons">delete</span>
-                </button>
+    
+            <h5 class="loan-dates"></h5>
+    
+            <div class="svg-graph"></div>
+    
+            <div class="outputs">
+                <div class="left">
+                    <!-- <p>Interest</p> -->
+                    <p class="interest-paid"></p>
+                    <!-- <p>Principle</p> -->
+                    <p class="principle-paid"></p>
+                </div>
+                <div class="right">
+                    <p>Balance</p>
+                    <h3 class="balance"></h3>
+                </div>
+                <!-- <p class="total-paid"></p> -->
             </div>
-
         </div>
+        <div class="loan-buttons">
+            <!-- Edit Button -->
+            <button class="create-from">
+                <span class="material-icons">library_add</span>
+            </button>
 
-        <h5 class="loan-dates"></h5>
 
-        <div class="svg-graph"></div>
+            <!-- Edit Button -->
+            <button class="edit">
+                <span class="material-icons">edit</span>
+            </button>
 
-        <div class="outputs">
-            <div class="left">
-                <!-- <p>Interest</p> -->
-                <p class="interest-paid"></p>
-                <!-- <p>Principle</p> -->
-                <p class="principle-paid"></p>
-            </div>
-            <div class="right">
-                <p>Balance</p>
-                <h3 class="balance"></h3>
-            </div>
-            <!-- <p class="total-paid"></p> -->
+            <!-- Delete Button -->
+            <button class="delete">
+                <span class="material-icons">delete</span>
+            </button>
         </div>
-
-
-
-
-
-
-
-
-
 
     </div>
 </template>

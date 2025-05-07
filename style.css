@@ -133,7 +133,7 @@ button {
 
 .term-row {
     display: grid;
-    grid-template-columns: repeat(360, 2rem);
+    grid-template-columns: repeat(360, 2.4rem);
     /* 1 column = 1 month = 2rem wide */
     position: relative;
 }
@@ -141,7 +141,7 @@ button {
 .term-card {
     grid-column-start: var(--start);
     grid-column-end: span var(--duration);
-    padding: .7rem;
+   
 }
 
 .loan-header {
@@ -212,4 +212,32 @@ button .material-icons {
 .loan-buttons>button {
     background-color: transparent;
 
+}
+
+.terms-container {
+    overflow-x: auto;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+}
+
+.content {
+    width: 100%;
+    padding: .7rem;
+}
+
+.loan-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    background-color: rgb(233, 233, 233);
+    padding: .7rem;
+    
+    border-top-right-radius: .5rem;
+    border-bottom-right-radius: .5rem;
+
+}
+
+.term-card {
+    display: flex;
+    flex-wrap: nowrap;
 }
