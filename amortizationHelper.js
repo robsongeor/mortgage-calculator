@@ -19,8 +19,6 @@ export function amortizationAlgorithm({
     const startDate = new Date(termStartDate);
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
 
-    console.log(midTerms)
-  
     const segments = [];
   
     // Step 1: Build amortization segments based on paymentChanges

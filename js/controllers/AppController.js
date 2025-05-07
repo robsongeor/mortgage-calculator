@@ -30,9 +30,18 @@ export class AppController {
         events.on("model:renderCards", (terms) => this.termCardModule.renderCards(terms));
 
         //Term Data Modal Events
+        events.on("term:requestCreateFrom", index => this.handleCreateFromRequest(index))
         events.on("term:requestDelete", index =>this.termsModule.deleteTerm(index));
         events.on("term:requestEdit", index => this.handleEditRequest(index));
 
+    }
+
+    handleCreateFromRequest(index){
+        const newTerm = this.termsModule.getDataForCreateFrom(index)
+        events.emit("form:populate", newTerm);
+        events.emit("form:open");
+
+        console.log(newTerm)
     }
 
     handleEditRequest(index){

@@ -37,6 +37,10 @@ function populateCardFields(card, term) {
 }
 
 function attachCardEventListeners(card) {
+    card.querySelector(".create-from").addEventListener("click", () => 
+        events.emit("term:requestCreateFrom", Number(card.dataset.index))
+    )
+
     card.querySelector(".edit").addEventListener("click", () =>
         events.emit("term:requestEdit", Number(card.dataset.index))
     );

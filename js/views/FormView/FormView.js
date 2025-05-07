@@ -9,6 +9,7 @@ export class FormView {
         this.dom = getFormDOM();
         this.handleSave = this.handleSave.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
+        this.init()
     }
 
     init() {
@@ -69,7 +70,7 @@ export class FormView {
         const data = this.getInputData();
         events.emit("form:save", data);
 
-        events.emit("form:save", this.getInputData());
+        
     }
 
     getValidationErrors() {
@@ -95,8 +96,6 @@ export class FormView {
 
         return { ...staticInputs, midTerms };
     }
-
-
 
     populate(inputData) {
         this.clearInputs();

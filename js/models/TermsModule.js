@@ -1,5 +1,6 @@
 import events from "../pubsub.js";
 import { amortizationAlgorithm } from "../../amortizationHelper.js";
+import { getEndDateISO } from "../views/termCardUtils.js";
 
 export class TermsModule {
     constructor() {
@@ -43,6 +44,21 @@ export class TermsModule {
 
     }
 
+    getDataForCreateFrom(index){
+        const term = this.terms[index];
+
+        let data = {
+            amount: term.balance,
+            paymentFreq: term.paymentFreq,
+            payments:term.payments,
+            rate: "",
+            startDate: getEndDateISO(term),
+            termYears: "",
+            termMonths: "",
+        }
+        return data;
+    }
+
     getTerm(index) {
         return this.terms[index];
     }
@@ -83,8 +99,6 @@ export class TermsModule {
         }
 
         const test = amortizationAlgorithm(parsedInput);
-
-        console.log(inputData)
 
         let outputs = {
             interestPaid: test.totalInterest,
