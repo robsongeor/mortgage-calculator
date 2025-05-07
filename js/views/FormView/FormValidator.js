@@ -1,4 +1,3 @@
-// FormValidator.js
 export function getInvalidInputs(inputs) {
     return inputs.filter(input => !input.value.trim()).map(input => input.closest(".input-cell")).filter(Boolean);
 }

@@ -7,18 +7,19 @@ import { createMidTermOptionUtil, getMidtermData, getInvalidMidtermInputs, clear
 export class FormView {
     constructor() {
         this.dom = getFormDOM();
-        this.render();
-
         this.handleSave = this.handleSave.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
-        this.createMidTermOption = this.createMidTermOption.bind(this);
+    }
 
+    init() {
+        this.render();
         this.bindDOMEvents();
         this.bindEvents();
     }
 
     setInputError(input, showError) {
-        setInputError(input, showError); // delegate to the original function
+        //Adds error class to element
+        setInputError(input, showError);
     }
 
     render() {
@@ -56,17 +57,29 @@ export class FormView {
     }
 
     handleSave() {
+        //Clear Errors
         clearAllInputErrors(this.dom.form);
 
-        const invalidInputs = getInvalidInputs(Object.values(this.dom.staticInputs));
-        const midtermErrors = getInvalidMidtermInputs(this.dom);
-
-        if (invalidInputs.length || midtermErrors.length) {
-            [...invalidInputs, ...midtermErrors].forEach(input => setInputError(input, true));
+        const errors = this.getValidationErrors();
+        if (errors.length) {
+            this.displayErrors(errors);
             return;
         }
 
+        const data = this.getInputData();
+        events.emit("form:save", data);
+
         events.emit("form:save", this.getInputData());
+    }
+
+    getValidationErrors() {
+        const invalidInputs = getInvalidInputs(Object.values(this.dom.staticInputs));
+        const midtermErrors = getInvalidMidtermInputs(this.dom);
+        return [...invalidInputs, ...midtermErrors];
+    }
+
+    displayErrors(inputs) {
+        inputs.forEach(input => setInputError(input, true));
     }
 
     handleCancel() {
@@ -83,9 +96,7 @@ export class FormView {
         return { ...staticInputs, midTerms };
     }
 
-    createMidTermOption(prefill) {
-        createMidTermOptionUtil(this, prefill);
-    }
+
 
     populate(inputData) {
         this.clearInputs();
@@ -96,7 +107,7 @@ export class FormView {
         });
 
         if (inputData.midTerms) {
-            inputData.midTerms.forEach(midTerm => this.createMidTermOption(midTerm));
+            inputData.midTerms.forEach(midTerm => createMidTermOptionUtil(this, midTerm));
         }
 
         this.show();
