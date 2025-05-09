@@ -13,7 +13,6 @@ export default class FormModel {
 
     set(rawFormData) {
         this.data = { ...rawFormData }
-        console.log(this.data)
     }
 
     process(rawFormData) {
@@ -28,8 +27,18 @@ export default class FormModel {
         const cleaned = this.mapOverInputGroups(rawFormData, this.removeNumberFormatting);
         const validatedNumbers = this.mapOverInputGroups(cleaned, this.validateNumbers);
 
+        this.set(validatedNumbers)
+
+        //If all inputs valid, emit with data for calc
+        //Else, emit return object with invalid inputs to formView for resubmission
+
+        
+
+        events.emit("formModel:sucessfulValidation", this.mapOverInputGroups(this.data, this.parseValues));
 
     }
+
+    parseValues = ({ name, value }) => ({ [name]: value });
 
     validateNumbers = (dataInput) => {
         const checkNumber = dataInput.valueType === "number"
@@ -63,8 +72,6 @@ export default class FormModel {
                 dataInput => operator(dataInput)
             );
         }
-
-        console.log(dataCopy)
 
         return dataCopy;
     }

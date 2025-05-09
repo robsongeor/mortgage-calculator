@@ -19,6 +19,10 @@ export default class FormController {
     registerEvents(){
         //View events
         events.on("formView:submit", (rawFormData) => events.emit("formModel:processInput", rawFormData))
+
+        //Model events
+        events.on("formModel:sucessfulValidation", parsedValues => console.log(parsedValues))
+
     }
 
 }
