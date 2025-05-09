@@ -82,8 +82,6 @@ export class TermsModule {
     parseMidTermsInput(array){
         let parsedArray = array;
 
-        console.log(array)
-
         parsedArray.forEach(midterm => {
             midterm.amount = Number(midterm.amount)
         });

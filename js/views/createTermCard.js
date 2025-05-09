@@ -54,8 +54,7 @@ function setCardStyles(card, term, baseDate) {
         (startDate.getMonth() - baseDate.getMonth());
     const totalMonths = getLoanDurationInMonths(term);
 
-    console.log(totalMonths)
-
+    
    
 
     card.style.setProperty('--start', monthsFromBase + 1 );

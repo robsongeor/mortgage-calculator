@@ -5,11 +5,13 @@ import { TermsModule } from "../models/TermsModule.js";
 import { TermCardModule } from "../views/TermCardModule.js"
 import { LoanCalculator } from "../models/LoanCalculator.js";
 
+import FormController from "./FormController.js";
+
 export class AppController {
     constructor() {
 
         this.AppModule = new AppModule();
-        this.formView = new FormView();
+        this.FormController = new FormController()
         this.termsModule = new TermsModule();
         this.termCardModule = new TermCardModule();
         this.loanCalculator = new LoanCalculator();
@@ -125,58 +127,3 @@ export class AppController {
         //this.termCardModule.groupByNonOverlappingDates(testTerms)
     }
 }
-
-[
-    {
-        "amount": "510000",
-        "rate": "6.89",
-        "termYears": "1",
-        "termMonths": "6",
-        "startDate": "2023-09-20",
-        "payments": "770",
-        "paymentFreq": "weekly",
-        "interestPaid": 50464.76,
-        "principlePaid": 9595.24,
-        "totalPaid": 60060,
-        "balance": 500404.76
-    },
-    {
-        "amount": "210000",
-        "rate": "6.69",
-        "termYears": "1",
-        "termMonths": "6",
-        "startDate": "2023-09-20",
-        "payments": "310",
-        "paymentFreq": "weekly",
-        "interestPaid": 20174.05,
-        "principlePaid": 4005.95,
-        "totalPaid": 24180,
-        "balance": 205994.05
-    },
-    {
-        "amount": "500404",
-        "rate": "5.79",
-        "termYears": "0",
-        "termMonths": "6",
-        "startDate": "2025-03-20",
-        "payments": "800",
-        "paymentFreq": "weekly",
-        "interestPaid": 13079.85,
-        "principlePaid": 7720.15,
-        "totalPaid": 20800,
-        "balance": 492683.85
-    },
-    {
-        "amount": "205994",
-        "rate": "6.69",
-        "termYears": "0",
-        "termMonths": "6",
-        "startDate": "2025-03-20",
-        "payments": "560",
-        "paymentFreq": "weekly",
-        "interestPaid": 6151.6,
-        "principlePaid": 8408.4,
-        "totalPaid": 14560,
-        "balance": 197585.6
-    }
-]
