@@ -28,8 +28,10 @@ export class TermsModule {
     }
 
     buildTerm(termData) {
-        const outputData = this.calculateTermOutputData(termData);
-        return { ...termData, ...outputData };
+        //const outputData = this.calculateTermOutputData(termData);
+        //return { ...termData, ...outputData };
+
+        return termData;
     }
 
     deleteTerm(index) {
