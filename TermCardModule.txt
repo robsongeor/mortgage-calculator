@@ -1,9 +1,0 @@
-**TermCardModule.js**
-Purpose:
-Responsible for rendering term cards visually in a timeline layout.
-
-Responsibilities:
-- Renders all term cards, grouped into non-overlapping rows.
-- Calculates dynamic widths and positions based on term durations.
-- Ensures timeline alignment (e.g., 2x 6mo = 1x 12mo).
-- Attaches edit/delete handlers and emits events accordingly.

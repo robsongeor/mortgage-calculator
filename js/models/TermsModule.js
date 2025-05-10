@@ -1,6 +1,6 @@
 import events from "../pubsub.js";
 import { amortizationAlgorithm } from "../../amortizationHelper.js";
-import { getEndDateISO } from "../views/termCardUtils.js";
+import { getEndDateISO, getInputFromData } from "../views/termCardUtils.js";
 
 export class TermsModule {
     constructor() {
@@ -8,7 +8,6 @@ export class TermsModule {
     }
 
     addTerm(termData) {
-
         const newTerm = this.buildTerm(termData);
 
         this.terms.push(newTerm);
@@ -28,10 +27,11 @@ export class TermsModule {
     }
 
     buildTerm(termData) {
-        //const outputData = this.calculateTermOutputData(termData);
-        //return { ...termData, ...outputData };
+        const outputData = this.calculateTermOutputData(termData);
 
-        return termData;
+        console.log({ ...termData, ...outputData });
+
+        return { ...termData, ...outputData };
     }
 
     deleteTerm(index) {
@@ -46,18 +46,20 @@ export class TermsModule {
 
     }
 
-    getDataForCreateFrom(index){
+    getDataForCreateFrom(index) {
         const term = this.terms[index];
 
         let data = {
-            amount: term.balance,
-            paymentFreq: term.paymentFreq,
-            payments:term.payments,
+            amount: getInputFromData("amount", term),
+            paymentFreq: getInputFromData("repaymentFreq", term),
+            payments: term.payments,
             rate: "",
             startDate: getEndDateISO(term),
             termYears: "",
             termMonths: "",
         }
+
+        console.log(data)
         return data;
     }
 
@@ -81,7 +83,7 @@ export class TermsModule {
         };
     }
 
-    parseMidTermsInput(array){
+    parseMidTermsInput(array) {
         let parsedArray = array;
 
         parsedArray.forEach(midterm => {
@@ -92,21 +94,23 @@ export class TermsModule {
     }
 
     calculateTermOutputData(inputData) {
-        const parsedInput = this.parseLoanInput(inputData);
+        //const parsedInput = this.parseLoanInput(inputData);
 
-        if(inputData.midTerms){
+        console.log(inputData)
+
+        if (inputData.midTerms) {
             parsedInput.midTerms = this.parseMidTermsInput(inputData.midTerms)
         }
 
-        const test = amortizationAlgorithm(parsedInput);
+        const test = amortizationAlgorithm(inputData);
 
-        let outputs = {
-            interestPaid: test.totalInterest,
-            principlePaid: test.totalPrinciple,
-            totalPaid: test.totalPayments,
-            balance: test.finalBalance
-        }
+        let outputs = [
+            { interestPaid: test.totalInterest },
+            { principlePaid: test.totalPrinciple },
+            { totalPaid: test.totalPayments },
+            { balance: test.finalBalance }
+        ]
 
-        return outputs;
+        return {outputs};
     }
 }

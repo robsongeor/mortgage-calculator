@@ -1,6 +1,5 @@
 import events from "../pubsub.js";
 import { AppModule } from "../views/AppModule.js";
-//import { FormView } from "../views/FormView/FormView.js";
 import { TermsModule } from "../models/TermsModule.js";
 import { TermCardModule } from "../views/TermCardModule.js"
 import { LoanCalculator } from "../models/LoanCalculator.js";
@@ -22,7 +21,7 @@ export class AppController {
 
         this.startWithTest();
 
-        this.FormController.view.save();
+        //this.FormController.view.save();
     }
 
     registerEvents() {
@@ -57,7 +56,6 @@ export class AppController {
     }
 
     handleFormSave(inputData) {
-        console.log(inputData)
 
         if (this.editing != null) {
             // Edit existing term
@@ -77,32 +75,33 @@ export class AppController {
                 {
                     "loanInputs": [
                         {
-                            "amount": 500000
+                            "amount": 500000,
                         },
                         {
-                            "rate": 6.85
+                            "rate": 5,
                         },
                         {
-                            "termYears": 30
+                            "termYears": 1,
                         },
                         {
-                            "termMonths": 0
+                            "termMonths": 6,
                         },
                         {
-                            "startDate": "2025-05-10"
+                            "startDate": "2025-05-10",
                         },
                         {
-                            "repayments": 600
+                            "repayments": 600,
                         },
                         {
-                            "repaymentsFreq": "weekly"
+                            "repaymentsFreq": "weekly",
                         }
                     ],
                     "repaymentAdjustments": [],
                     "interestOnlyPeriods": [],
                     "lumpSumPayments": [],
                     "paymentHolidays": []
-                }
+                },
+                
             ]
             ;
 

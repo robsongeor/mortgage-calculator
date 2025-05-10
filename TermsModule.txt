@@ -1,9 +1,0 @@
-**TermsModule.js**
-Purpose:
-Maintains and manipulates the list of all term objects.
-
-Responsibilities:
-- Stores the full list of mortgage terms.
-- Provides methods to add, update, and delete terms.
-- Emits changes to allow other modules to re-render.
-- Handles internal term data integrity.

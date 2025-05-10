@@ -1,5 +1,7 @@
 import DataInput from "../components/DataInput.js";
 import events from "../pubsub.js";
+import { createButton } from "../utils/FormUtils.js";
+import { getInputFromData } from "./termCardUtils.js";
 
 export default class FormView {
     constructor(inputs, defaultLoanInputConfigs) {
@@ -10,7 +12,9 @@ export default class FormView {
 
         this._createForm(defaultLoanInputConfigs);
 
-        //this.getRawInputValues();
+        events.on("form:open", this.show.bind(this))
+        events.on("form:close", this.clearAndHide.bind(this))
+        events.on("form:populate", this.populateInputs.bind(this))
     }
 
     _createForm(defaultLoanInputConfigs) {
@@ -21,8 +25,22 @@ export default class FormView {
             this.createInput(config, "loanInputs")
         })
 
-        console.log(this.inputs)
+        // Create loan buttons
+        this._createButtons()
     }
+
+    _createButtons() {
+        const buttons = [
+            createButton({ text: "save", onClick: this.save.bind(this) }),
+            createButton({ text: "cancel", onClick: this.cancel.bind(this) })
+        ]
+
+        buttons.forEach(button => {
+            this.el.appendChild(button);
+        })
+
+    }
+
 
     createInput(config, group) {
         const input = new DataInput(config);
@@ -32,6 +50,10 @@ export default class FormView {
 
     save() {
         events.emit("formView:submit", this.getRawInputValues())
+    }
+
+    cancel() {
+        this.clearAndHide();
     }
 
     getElement() {
@@ -47,7 +69,8 @@ export default class FormView {
                 const rawData = {
                     name: dataInput.name,
                     valueType: dataInput.valueType,
-                    value: dataInput.getValue()
+                    value: dataInput.getValue(),
+                    formatter: dataInput.formatter,
                 }
 
                 data[group].push(rawData);
@@ -55,6 +78,39 @@ export default class FormView {
         }
 
         return data;
+    }
+
+    clearInputs() {
+        for (const group in this.inputs) {
+            this.inputs[group].forEach(dataInput => {
+
+                const currentDiv = this.el.querySelector(`input[name="${dataInput.name}"]`)
+                currentDiv.value = "";
+            })
+        }
+    }
+
+    populateInputs(data){
+        for (const group in this.inputs) {
+            this.inputs[group].forEach(dataInput => {
+
+                const currentDiv = this.el.querySelector(`input[name="${dataInput.name}"]`)
+                currentDiv.value = getInputFromData(dataInput.name, data)
+            })
+        }
+    }
+
+    clearAndHide() {
+        this.clearInputs();
+        this.hide();
+    }
+
+    show() {
+        this.el.style.display = "block";
+    }
+
+    hide() {
+        this.el.style.display = "none";
     }
 }
 

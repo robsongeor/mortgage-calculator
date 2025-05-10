@@ -1,9 +1,0 @@
-**AppController.js**
-Purpose:
-Acts as the central coordinator of the application. It manages the interaction between modules, handles events, and updates the state of the app.
-
-Responsibilities:
-- Subscribes to and emits events using the pubsub system.
-- Orchestrates data flow between FormView, TermsModule, and TermCardModule.
-- Handles term creation, editing, and deletion.
-- Manages the lifecycle and rendering of term data.

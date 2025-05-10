@@ -1,13 +1,11 @@
 export function amortizationAlgorithm({
-    amount: loanAmount,
-    rate,
-    termYears,
-    termMonths,
-    startDate: termStartDate,
-    payments: initialPayment,
-    paymentFreq,
-    midTerms = [] // array of { date, amount }
+    loanInputs = [],
+    repaymentAdjustments = [],
+    interestOnlyPeriods = [],
+    lumpSumPayments = [],
+    paymentHolidays = []
   }) {
+    
     const results = {
       finalBalance: 0,
       totalInterest: 0,
@@ -15,16 +13,25 @@ export function amortizationAlgorithm({
       totalPrinciple: 0,
       paymentsMade: 0
     };
+
+    const amount = getValueByKey(loanInputs, "amount");
+    const rate = getValueByKey(loanInputs, "rate");
+    const termYears = getValueByKey(loanInputs, "termYears");
+    const termMonths = getValueByKey(loanInputs, "termMonths");
+    const startDate = getValueByKey(loanInputs, "startDate");
+    const repayments = getValueByKey(loanInputs, "repayments");
+    const repaymentsFreq = getValueByKey(loanInputs, "repaymentsFreq");
+
+    console.log(loanInputs)
   
-    const startDate = new Date(termStartDate);
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
 
     const segments = [];
   
     // Step 1: Build amortization segments based on paymentChanges
-    const sortedChanges = [...midTerms].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const sortedChanges = [...repaymentAdjustments].sort((a, b) => new Date(a.date) - new Date(b.date));
     let segmentStart = startDate;
-    let currentPayment = initialPayment;
+    let currentPayment = repayments;
   
     for (let i = 0; i < sortedChanges.length; i++) {
       const change = sortedChanges[i];
@@ -42,10 +49,10 @@ export function amortizationAlgorithm({
     segments.push({ start: segmentStart, end: endDate, payment: currentPayment });
   
     // Step 2: Calculate each segment
-    let balance = loanAmount;
+    let balance = amount;
   
     for (const seg of segments) {
-      const result = calculateTerm(balance, rate, seg.start, seg.end, seg.payment, paymentFreq);
+      const result = calculateTerm(balance, rate, seg.start, seg.end, seg.payment, repaymentsFreq);
   
       results.finalBalance = result.finalBalance;
       results.totalInterest += result.totalInterest;
@@ -66,7 +73,10 @@ export function amortizationAlgorithm({
     };
   }
   
-
+function getValueByKey(dataArray, key) {
+    const match = dataArray.find(obj => key in obj);
+    return match ? match[key] : undefined;
+  }
 
 function calculateTerm(amount, rate, startDate, endDate, payment, paymentFreq) {
     const totalPayments = getTotalPayments(paymentFreq, startDate, endDate);

@@ -7,9 +7,12 @@ export class TermCardModule {
     }
 
     renderCards(terms) {
+
+
         this.clearContainer();
         const rows = groupByNonOverlappingDates(terms);
         const baseDate = getEarliestStartDate(terms);
+
         const fragment = document.createDocumentFragment();
 
         rows.forEach((row, rowIndex) => {
@@ -19,6 +22,7 @@ export class TermCardModule {
             });
             fragment.appendChild(rowDiv);
         });
+
 
         this.container.appendChild(fragment);
     }

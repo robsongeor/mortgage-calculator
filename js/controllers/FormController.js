@@ -23,7 +23,8 @@ export default class FormController {
         //Model events
         events.on("formModel:validationSuccessful", (parsedValues) => events.emit("form:save", parsedValues))
 
-    }
+
+    }   
 
 }
 
@@ -37,12 +38,12 @@ const defaultInputGroups = () => ({
 })
 
 const defaultLoanInputConfigs = () => ([
-{ name: "amount", label: "Loan Amount", type: "text", value: "$500,000", formatter: "currency", valueType: "number" },
-{ name: "rate", label: "Interest Rate", type: "text", value: "6.85", formatter: "percentage", valueType: "number" },
-{ name: "termYears", label: "Term (Years)", type: "number", value: "30", formatter: null, valueType: "number"},
-{ name: "termMonths", label: "Term (Months)", type: "number", value: "0", formatter: null, valueType: "number" },
+{ name: "amount", label: "Loan Amount", type: "text", value: "", formatter: "currency", valueType: "number" },
+{ name: "rate", label: "Interest Rate", type: "text", value: "", formatter: "percentage", valueType: "number" },
+{ name: "termYears", label: "Term (Years)", type: "number", value: "", formatter: null, valueType: "number"},
+{ name: "termMonths", label: "Term (Months)", type: "number", value: "", formatter: null, valueType: "number" },
 { name: "startDate", label: "Start Date", type: "date", value: getDefaultDate(), formatter: null, valueType: "string" },
-{ name: "repayments", label: "Repayment Amount", type: "text", value: "$600", formatter: "currency",valueType: "number" },
+{ name: "repayments", label: "Repayment Amount", type: "text", value: "", formatter: "currency",valueType: "number" },
 { name: "repaymentsFreq", label: "Repayment Frequency", type: "select", value: "weekly", options: ["weekly", "fortnightly", "monthly"], formatter: null, valueType: "string" }
 ])
 

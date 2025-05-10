@@ -1,14 +1,37 @@
 export function getLoanDurationInMonths(term) {
-    return Number(term.termYears) * 12 + Number(term.termMonths);
+    const termYears = getInputFromData("termYears", term);
+    const termMonths = getInputFromData("termMonths", term);
+
+    return Number(termYears) * 12 + Number(termMonths);
 }
 
-export function getEndDate(term) {
-    const startDate = new Date(term.startDate);
-    return new Date(
-        startDate.getFullYear() + Number(term.termYears),
-        startDate.getMonth() + Number(term.termMonths),
+export function getStartDate(data){
+    const startDate = getInputFromData("startDate", data)
+    return new Date(startDate);
+}
+
+export function getEndDate(data) {
+    const startDate = getStartDate(data);
+    const termYears = getInputFromData("termYears", data)
+    const termMonths = getInputFromData("termMonths", data)
+
+    const endDate = new Date(
+        startDate.getFullYear() + Number(termYears),
+        startDate.getMonth() + Number(termMonths),
         startDate.getDate()
     );
+    return endDate;
+}
+
+export function getInputFromData(key, data){
+    for (const group in data){
+        const match = data[group].find(input => input.hasOwnProperty(key));
+        if (match) {
+            return match[key];
+        }
+
+    }
+    return undefined;
 }
 
 export function formatDateToISO(date) {
@@ -25,12 +48,7 @@ export function getEndDateISO(term) {
   }
 
 
-export function getLoanDatesString(term) {
-    const startDate = new Date(term.startDate);
-    const endDate = getEndDate(term);
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    return `${startDate.toLocaleDateString(undefined, options)} to ${endDate.toLocaleDateString(undefined, options)}`;
-}
+
 
 export function getLocaleDollarString(value){
     const amountNumeric = parseInt(value, 10);
@@ -40,13 +58,42 @@ export function getLocaleDollarString(value){
     return `${formattedAmount}`;
 }
 
-export function getTitleString(term) {
-    const amountNumeric = parseInt(term.amount, 10);
+export function getFormattedAmount(term) {
+    const amount = getInputFromData("amount", term)
+
+    const amountNumeric = parseInt(amount, 10);
     const formattedAmount = amountNumeric.toLocaleString("en-NZ", {
         style: "currency", currency: "NZD", minimumFractionDigits: 0
     });
-    const duration = formatTermDuration(term);
+
     return `${formattedAmount}`;
+}
+
+const formatters = {
+    percent: getFormattedPercent,
+    currency: getFormattedCurrency,
+
+}
+
+export function getFormattedCurrency(input) {
+    const amountNumeric = parseInt(input, 10);
+    const formattedAmount = amountNumeric.toLocaleString("en-NZ", {
+        style: "currency", currency: "NZD", minimumFractionDigits: 0
+    });
+
+    return `${formattedAmount}`;
+}
+
+export function getFormattedPercent(input){
+    return `${input}%`
+}
+
+
+export function getFormattedInput(name, formatter, term){
+    const input = getInputFromData(name, term);
+    const formatterFunction = formatters[formatter];
+
+    return formatterFunction(input);    
 }
 
 export function getTermString(term) {
@@ -54,39 +101,60 @@ export function getTermString(term) {
     return `${duration}`;
 }
 
-export function formatTermDuration(term) {
-    const months = Number(term.termMonths) !== 0 ? `${term.termMonths} months` : "";
-    const yearsString = Number(term.termYears) === 1 ? "year" : "years";
-    const years = Number(term.termYears) !== 0 ? `${term.termYears} ${yearsString}` : "";
-    return `${years} ${months}`;
+export function getTermDuration(term){
+    const termYears = getInputFromData("termYears", term);
+    const termMonths = getInputFromData("termMonths", term);
+
+    const months = termMonths !== 0 ? `${termMonths} months` : "";
+    const yearsString = termYears === 1 ? "year" : "years";
+    const years = termYears !== 0 ? `${termYears} ${yearsString}` : "";
+         return `${years} ${months}`;
 }
 
+export function getTermDates(term){
+    const startDate = getStartDate(term);
+    const endDate = getEndDate(term);
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return `${startDate.toLocaleDateString(undefined, options)} to ${endDate.toLocaleDateString(undefined, options)}`;
+
+}
+
+
 export function getEarliestStartDate(terms) {
-    return new Date(Math.min(...terms.map(term => new Date(term.startDate))));
+    return new Date(Math.min(...terms.map(term => getStartDate(term))));
 }
 
 export function getOriginalIndex(term, terms) {
     return terms.indexOf(term);
 }
 
+
 export function groupByNonOverlappingDates(terms) {
     const rows = [];
-    const sorted = [...terms].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    
+    //Sort the terms
+    const sorted = terms.sort((a, b) => getStartDate(a) - getStartDate(b));
+
     for (const term of sorted) {
-        const termStart = new Date(term.startDate);
+        
+        const termStart = getStartDate(term);
         const termEnd = getEndDate(term);
         const row = findAvailableRow(termStart, termEnd, rows);
         if (row) row.push(term);
         else rows.push([term]);
     }
+   
     return rows;
 }
+
+
+
 
 function findAvailableRow(termStart, termEnd, rows) {
     for (const row of rows) {
         const hasOverlap = row.some(existing => datesOverlap(
             termStart, termEnd,
-            new Date(existing.startDate),
+            getStartDate(existing),
             getEndDate(existing)
         ));
         if (!hasOverlap) return row;

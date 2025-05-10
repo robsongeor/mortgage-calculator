@@ -26,15 +26,17 @@ export default class FormModel {
         const validated = this.validateInputs(cleaned);
         const invalidInputs = this.getInvalidInputs(validated);
 
+        
         if (Object.keys(invalidInputs).length > 0) {
             events.emit("formModel:validationFailed", invalidInputs);
+            console.log("failed")
         } else {
             const parsed = this.mapOverInputGroups(validated, this.parseValues);
             events.emit("formModel:validationSuccessful", parsed);
         }
     }
 
-    parseValues = ({ name, value }) => ({ [name]: value });
+    parseValues = ({ name, value, formatter }) => ({ [name]: value,  formatter });
 
     getInvalidInputs(data) {
         const invalidInputs = {};

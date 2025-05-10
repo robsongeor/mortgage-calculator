@@ -14,4 +14,24 @@ export function isValidNumericValue(dataInput) {
             return dataInput.value > 0;
     }
 
-} 
+}
+
+export function createButton({ text = "", classes = [], id = "", onClick = null }) {
+    const button = document.createElement("button");
+
+    button.textContent = text;
+
+    if (id) button.id = id;
+
+    if (classes.length > 0) {
+        button.classList.add(...classes);
+    }
+
+    if (typeof onClick === "function") {
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            onClick(event);
+        });
+    }
+    return button;
+}

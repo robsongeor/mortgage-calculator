@@ -1,9 +1,0 @@
-**FormView.js**
-Purpose:
-Manages the loan input form. Responsible for capturing user inputs and converting them into structured term objects.
-
-Responsibilities:
-- Displays and hides the form UI.
-- Gathers and validates user input.
-- Emits events when a term is submitted or canceled.
-- Pre-populates form fields when editing an existing term.
