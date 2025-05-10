@@ -9,7 +9,7 @@ import FormController from "./FormController.js";
 
 export class AppController {
     constructor() {
-
+        
         this.AppModule = new AppModule();
         this.FormController = new FormController()
         this.termsModule = new TermsModule();
@@ -22,7 +22,7 @@ export class AppController {
 
         this.startWithTest();
 
-   
+        this.FormController.view.save();
     }
 
     registerEvents() {
@@ -57,6 +57,7 @@ export class AppController {
     }
 
     handleFormSave(inputData) {
+        console.log(inputData)
 
         if (this.editing != null) {
             // Edit existing term
@@ -74,49 +75,33 @@ export class AppController {
         const testTerms =
             [
                 {
-                    "amount": "510000",
-                    "rate": "6.89",
-                    "termYears": "1",
-                    "termMonths": "6",
-                    "startDate": "2023-09-20",
-                    "payments": "770",
-                    "paymentFreq": "weekly",
-                    "interestPaid": 50464.76,
-                    "principlePaid": 9595.24,
-                    "totalPaid": 60060,
-                    "balance": 500404.76
-                },
-                {
-                    "amount": "500404",
-                    "rate": "5.79",
-                    "termYears": "0",
-                    "termMonths": "6",
-                    "startDate": "2025-03-20",
-                    "payments": "800",
-                    "paymentFreq": "weekly",
-                    "interestPaid": 13079.85,
-                    "principlePaid": 7720.15,
-                    "totalPaid": 20800,
-                    "balance": 492683.85
-                },
-                {
-                    "amount": "210000",
-                    "rate": "6.69",
-                    "termYears": "2",
-                    "termMonths": "0",
-                    "startDate": "2023-09-20",
-                    "payments": "310",
-                    "paymentFreq": "weekly",
-                    "midTerms": [
+                    "loanInputs": [
                         {
-                            "amount": 560,
-                            "date": "2025-03-20"
+                            "amount": 500000
+                        },
+                        {
+                            "rate": 6.85
+                        },
+                        {
+                            "termYears": 30
+                        },
+                        {
+                            "termMonths": 0
+                        },
+                        {
+                            "startDate": "2025-05-10"
+                        },
+                        {
+                            "repayments": 600
+                        },
+                        {
+                            "repaymentsFreq": "weekly"
                         }
                     ],
-                    "interestPaid": 26325.66,
-                    "principlePaid": 12414.34,
-                    "totalPaid": 38740,
-                    "balance": 197585.66
+                    "repaymentAdjustments": [],
+                    "interestOnlyPeriods": [],
+                    "lumpSumPayments": [],
+                    "paymentHolidays": []
                 }
             ]
             ;

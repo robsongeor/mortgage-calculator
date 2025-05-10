@@ -1,4 +1,5 @@
 import events from "../pubsub.js";
+import { extractNumberFromString, isValidNumericValue } from "../utils/FormUtils.js";
 
 export default class FormModel {
     constructor(defaultInputGroups) {
@@ -16,45 +17,77 @@ export default class FormModel {
     }
 
     process(rawFormData) {
-        let data = rawFormData;
         //Process will clean the data, validate and return either an error or success
         // First turn number strings into numbers
         // Check numbers are valid - not less than 0, percents not greater than x%
         // Check dates are valid. optional dates cant be less than start or greater than end of term
         // 
-        this.set(rawFormData);
-
         const cleaned = this.mapOverInputGroups(rawFormData, this.removeNumberFormatting);
-        const validatedNumbers = this.mapOverInputGroups(cleaned, this.validateNumbers);
+        const validated = this.validateInputs(cleaned);
+        const invalidInputs = this.getInvalidInputs(validated);
 
-        this.set(validatedNumbers)
-
-        //If all inputs valid, emit with data for calc
-        //Else, emit return object with invalid inputs to formView for resubmission
-
-        
-
-        events.emit("formModel:sucessfulValidation", this.mapOverInputGroups(this.data, this.parseValues));
-
+        if (Object.keys(invalidInputs).length > 0) {
+            events.emit("formModel:validationFailed", invalidInputs);
+        } else {
+            const parsed = this.mapOverInputGroups(validated, this.parseValues);
+            events.emit("formModel:validationSuccessful", parsed);
+        }
     }
 
     parseValues = ({ name, value }) => ({ [name]: value });
 
+    getInvalidInputs(data) {
+        const invalidInputs = {};
+
+        for (const group in data) {
+            const invalidGroupInputs = data[group].filter(input => input.valid === false);
+            if (invalidGroupInputs.length > 0) {
+                invalidInputs[group] = invalidGroupInputs;
+            }
+        }
+
+        return invalidInputs;
+    }
+
+    validateInputs(data) {
+        //Check all numbers
+        const validatedNumbers = this.mapOverInputGroups(data, this.validateNumbers);
+
+        //Special check for termYears && termMonths
+        const validatedTermDuration = this.validateTermDuration(validatedNumbers);
+
+        return validatedTermDuration;
+    }
+
+    validateTermDuration(data) {
+        const termYears = data.loanInputs.find(input => input.name === "termYears");
+        const termMonths = data.loanInputs.find(input => input.name === "termMonths");
+
+        const bothZero = (termYears?.value ?? 0) === 0 && (termMonths?.value ?? 0) === 0;
+
+        if (bothZero) {
+            // Mark both as invalid
+            termYears.valid = false;
+            termMonths.valid = false;
+        }
+
+        return data;
+    }
+
     validateNumbers = (dataInput) => {
-        const checkNumber = dataInput.valueType === "number"
-            ? this.isValidNumericValue(dataInput)
+        const isValid = dataInput.valueType === "number"
+            ? isValidNumericValue(dataInput)
             : "not checked"
 
         return {
             ...dataInput,
-            invalid: checkNumber
+            valid: isValid
         };
     }
-        
-    
+
     removeNumberFormatting = (dataInput) => {
         const cleanedValue = dataInput.valueType === "number"
-            ? this.extractNumberFromString(dataInput.value)
+            ? extractNumberFromString(dataInput.value)
             : dataInput.value;
 
         return {
@@ -64,35 +97,14 @@ export default class FormModel {
     }
 
     mapOverInputGroups = (data, operator) => {
-        // This iteratates over the input groups object, and applies 'operator' function
-        let dataCopy = {}
-
+        const dataCopy = {};
+    
         for (const group in data) {
-            dataCopy[group] = data[group].map(
-                dataInput => operator(dataInput)
-            );
+            if (Array.isArray(data[group])) {
+                dataCopy[group] = data[group].map(dataInput => operator(dataInput));
+            }
         }
-
+    
         return dataCopy;
     }
-
-    //HELPERS TO BE MOVED!//
-
-    extractNumberFromString(str) {
-        return parseFloat(str.replace(/[^0-9.]/g, ""));
-    }
-
-    isValidNumericValue(dataInput) {
-        switch (dataInput.name){
-            case "termYears":
-            case "termMonths":
-               return dataInput.value >= 0;
-            case "rate":
-                return dataInput.value > 0 && dataInput.value < 50;
-            default:
-                return dataInput.value > 0;
-        }
-    }
-
-
 }

@@ -10,7 +10,7 @@ export default class FormController {
         this.renderForm()
         this.registerEvents();
 
-        this.view.save();
+        
     }
     renderForm(){
         document.querySelector('.container').appendChild(this.view.getElement());
@@ -21,7 +21,7 @@ export default class FormController {
         events.on("formView:submit", (rawFormData) => events.emit("formModel:processInput", rawFormData))
 
         //Model events
-        events.on("formModel:sucessfulValidation", parsedValues => console.log(parsedValues))
+        events.on("formModel:validationSuccessful", (parsedValues) => events.emit("form:save", parsedValues))
 
     }
 
