@@ -73,17 +73,6 @@ export function getEndDateISO(term) {
     return(formatDateToISO(date));
   }
 
-
-
-
-export function getLocaleDollarString(value){
-    const amountNumeric = parseInt(value, 10);
-    const formattedAmount = amountNumeric.toLocaleString("en-NZ", {
-        style: "currency", currency: "NZD", minimumFractionDigits: 0
-    });
-    return `${formattedAmount}`;
-}
-
 export function getFormattedAmount(term) {
     const amount = getInputFromData("amount", term)
 

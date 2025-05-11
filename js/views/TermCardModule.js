@@ -7,9 +7,15 @@ export class TermCardModule {
     }
 
     renderCards(terms) {
-
-
         this.clearContainer();
+        this.createRows(terms);
+    }
+
+    clearContainer() {
+        this.container.innerHTML = "";
+    }
+
+    createRows(terms) {
         const rows = groupByNonOverlappingDates(terms);
         const baseDate = getEarliestStartDate(terms);
 
@@ -23,12 +29,8 @@ export class TermCardModule {
             fragment.appendChild(rowDiv);
         });
 
-
         this.container.appendChild(fragment);
-    }
 
-    clearContainer() {
-        this.container.innerHTML = "";
     }
 
     createRowContainer(index) {

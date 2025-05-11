@@ -1,6 +1,6 @@
 import events from "../pubsub.js";
 import { amortizationAlgorithm } from "../../amortizationHelper.js";
-import { clearAllValues, getEndDate, getEndDateISO, getInputFromData, setInputValue } from "../views/termCardUtils.js";
+import { clearAllValues, getEndDateISO, getInputFromData, setInputValue } from "../views/termCardUtils.js";
 
 export class TermsModule {
     constructor() {
@@ -29,8 +29,6 @@ export class TermsModule {
     buildTerm(termData) {
         const outputData = this.calculateTermOutputData(termData);
 
-        console.log({ ...termData, ...outputData });
-
         return { ...termData, ...outputData };
     }
 
@@ -38,7 +36,6 @@ export class TermsModule {
         if (this.terms[index]) {
             const deletedTerm = this.terms.splice(index, 1)[0];
             events.emit("model:renderCards", this.terms)
-            console.log(this.terms)
         } else {
             console.warn(`No term found at index ${index} to delete.`);
         }
@@ -64,7 +61,6 @@ export class TermsModule {
     }
 
 
-
     getTerm(index) {
         return this.terms[index];
     }
@@ -76,8 +72,6 @@ export class TermsModule {
     calculateTermOutputData(inputData) {
 
         const test = amortizationAlgorithm(inputData);
-
-        console.log(test)
 
         let outputs = [
             { interestPaid: test.totalInterest },
