@@ -34,6 +34,32 @@ export function getInputFromData(key, data){
     return undefined;
 }
 
+export function clearAllValues(data) {
+    for (const group in data) {
+        const groupArray = data[group];
+        if (Array.isArray(groupArray)) {
+            groupArray.forEach(item => {
+                for (const key in item) {
+                    item[key] = ""; // Or use null if that's more appropriate
+                }
+            });
+        }
+    }
+}
+
+export function setInputValue(key, value, data){
+    for(const group in data){
+        const currentGroup = data[group];
+        if(Array.isArray(currentGroup)){
+            const target = currentGroup.find(input => input.hasOwnProperty(key));
+            if(target){
+                target[key] = value;
+            }
+        }
+    }
+}
+
+
 export function formatDateToISO(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth is 0-indexed

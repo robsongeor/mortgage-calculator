@@ -41,7 +41,7 @@ export class AppController {
 
     handleCreateFromRequest(index) {
         //Creates a term prefilled with the term end dates and balance
-        const newTerm = this.termsModule.getDataForCreateFrom(index)
+        const newTerm = this.termsModule.createFromTerm(index)
         events.emit("form:populate", newTerm);
         events.emit("form:open");
 

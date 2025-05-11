@@ -1,6 +1,6 @@
 import events from "../pubsub.js";
 import { amortizationAlgorithm } from "../../amortizationHelper.js";
-import { getEndDateISO, getInputFromData } from "../views/termCardUtils.js";
+import { clearAllValues, getEndDate, getEndDateISO, getInputFromData, setInputValue } from "../views/termCardUtils.js";
 
 export class TermsModule {
     constructor() {
@@ -46,22 +46,24 @@ export class TermsModule {
 
     }
 
-    getDataForCreateFrom(index) {
-        const term = this.terms[index];
+    createFromTerm(index) {
+        let copy = structuredClone(this.getTerm(index));
 
-        let data = {
-            amount: getInputFromData("amount", term),
-            paymentFreq: getInputFromData("repaymentFreq", term),
-            payments: term.payments,
-            rate: "",
-            startDate: getEndDateISO(term),
-            termYears: "",
-            termMonths: "",
-        }
+        // Get data to copy
+        const endDate = getEndDateISO(copy);
+        const amount = getInputFromData("balance", copy)
 
-        console.log(data)
-        return data;
+        // Clear any values
+        clearAllValues(copy);
+
+        // Copy the stored values
+        setInputValue("startDate",endDate ,copy)
+        setInputValue("amount", amount, copy);
+
+        return copy;
     }
+
+
 
     getTerm(index) {
         return this.terms[index];
@@ -71,38 +73,11 @@ export class TermsModule {
         return [...this.terms];  // Return a copy for safety
     }
 
-    parseLoanInput(input) {
-        return {
-            amount: Number(input.amount),
-            rate: Number(input.rate),
-            termYears: Number(input.termYears),
-            termMonths: Number(input.termMonths),
-            startDate: input.startDate,
-            payments: Number(input.payments),
-            paymentFreq: input.paymentFreq,
-        };
-    }
-
-    parseMidTermsInput(array) {
-        let parsedArray = array;
-
-        parsedArray.forEach(midterm => {
-            midterm.amount = Number(midterm.amount)
-        });
-
-        return parsedArray;
-    }
-
     calculateTermOutputData(inputData) {
-        //const parsedInput = this.parseLoanInput(inputData);
-
-        console.log(inputData)
-
-        if (inputData.midTerms) {
-            parsedInput.midTerms = this.parseMidTermsInput(inputData.midTerms)
-        }
 
         const test = amortizationAlgorithm(inputData);
+
+        console.log(test)
 
         let outputs = [
             { interestPaid: test.totalInterest },
