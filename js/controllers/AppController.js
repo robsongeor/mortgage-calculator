@@ -2,7 +2,6 @@ import events from "../pubsub.js";
 import { AppModule } from "../views/AppModule.js";
 import { TermsModule } from "../models/TermsModule.js";
 import { TermCardModule } from "../views/TermCardModule.js"
-import { LoanCalculator } from "../models/LoanCalculator.js";
 
 import FormController from "./FormController.js";
 
@@ -13,7 +12,6 @@ export class AppController {
         this.FormController = new FormController()
         this.termsModule = new TermsModule();
         this.termCardModule = new TermCardModule();
-        this.loanCalculator = new LoanCalculator();
 
         this.editing = null; // stores the index of the term to edit, if null used to create new term
 
@@ -21,7 +19,6 @@ export class AppController {
 
         this.startWithTest();
 
-        //this.FormController.view.save();
     }
 
     registerEvents() {
