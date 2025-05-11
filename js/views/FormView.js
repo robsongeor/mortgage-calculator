@@ -4,7 +4,7 @@ import { createButton } from "../utils/FormUtils.js";
 import { getInputFromData } from "./termCardUtils.js";
 
 export default class FormView {
-    constructor(inputs, defaultLoanInputConfigs) {
+    constructor(inputs, defaultGroupConfigs) {
         // Create and configure the form element
         this.el = document.createElement('form');
         this.el.className = 'form-view';
@@ -13,7 +13,7 @@ export default class FormView {
         this.inputs = inputs;
 
         // Build initial form layout and input elements
-        this._createForm(defaultLoanInputConfigs);
+        this._createForm(defaultGroupConfigs);
 
         // Subscribe to relevant UI events
         this._registerEvents();
@@ -26,14 +26,24 @@ export default class FormView {
         events.on("form:populate", this.populateInputs.bind(this));
     }
 
-    _createForm(defaultLoanInputConfigs) {
+    _createForm(defaultGroupConfigs) {
         // Create inputs from default configuration
-        defaultLoanInputConfigs.forEach(config => {
-            this.createInput(config, "loanInputs");
-        });
+        for (const group in defaultGroupConfigs){
+            console.log(defaultGroupConfigs[group])
+            this._createGroupDiv(group);
+            defaultGroupConfigs[group].forEach(config => {
+                this.createInput(config, group);
+            })
+        }
 
         // Create and append Save/Cancel buttons
         this._createButtons();
+    }
+    _createGroupDiv(group){
+        const groupDiv = document.createElement("div");
+        groupDiv.classList.add(group);
+        this.el.appendChild(groupDiv);
+
     }
 
     _createButtons() {
@@ -50,8 +60,9 @@ export default class FormView {
 
     createInput(config, group) {
         // Instantiate input from config and store reference
+        const groupDiv = this.el.querySelector(`.${group}`)
         const input = new DataInput(config);
-        this.el.appendChild(input.getElement());
+        groupDiv.appendChild(input.getElement());
         this.inputs[group].push(input);
     }
 

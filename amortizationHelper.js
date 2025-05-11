@@ -21,8 +21,6 @@ export function amortizationAlgorithm({
     const startDate = getValueByKey(loanInputs, "startDate");
     const repayments = getValueByKey(loanInputs, "repayments");
     const repaymentsFreq = getValueByKey(loanInputs, "repaymentsFreq");
-
-    console.log(loanInputs)
   
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
 
@@ -174,13 +172,4 @@ function addYearsAndMonths(date, years, months) {
 function roundToCents(value) {
     return Math.round(value * 100) / 100;
 }
-
-const input = {
-    amount: 500000,
-    rate: 5,
-    termYears: 1,
-    termMonths: 0,
-    payments: 650,
-    paymentFreq: "weekly",
-};
 

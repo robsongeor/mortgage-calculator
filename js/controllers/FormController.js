@@ -3,20 +3,20 @@ import FormModel from "../models/FormModel.js";
 import events from "../pubsub.js";
 
 export default class FormController {
-    constructor(){
-        this.view = new FormView(defaultInputGroups(), defaultLoanInputConfigs());
+    constructor() {
+        this.view = new FormView(defaultInputGroups(), defaultGroupConfigs());
         this.model = new FormModel(defaultInputGroups());
 
         this.renderForm()
         this.registerEvents();
 
-        
+
     }
-    renderForm(){
+    renderForm() {
         document.querySelector('.container').appendChild(this.view.getElement());
     }
 
-    registerEvents(){
+    registerEvents() {
         //View events
         events.on("formView:submit", (rawFormData) => events.emit("formModel:processInput", rawFormData))
 
@@ -24,7 +24,7 @@ export default class FormController {
         events.on("formModel:validationSuccessful", (parsedValues) => events.emit("form:save", parsedValues))
 
 
-    }   
+    }
 
 }
 
@@ -37,18 +37,32 @@ const defaultInputGroups = () => ({
     paymentHolidays: [],          // Periods of paused or reduced payments
 })
 
+const defaultGroupConfigs = () => ({
+    loanInputs: defaultLoanInputConfigs(),               // Base loan data (e.g., amount, rate, term)
+    repaymentAdjustments: repaymentAdjustmentConfigs(),     // Multiple changes to repayment amount
+    interestOnlyPeriods: [],      // Can be plural if multiple intervals allowed
+    lumpSumPayments: [],          // One-off extra payments
+    paymentHolidays: [],          // Periods of paused or reduced payments
+})
+
 const defaultLoanInputConfigs = () => ([
-{ name: "amount", label: "Loan Amount", type: "text", value: "", formatter: "currency", valueType: "number" },
-{ name: "rate", label: "Interest Rate", type: "text", value: "", formatter: "percentage", valueType: "number" },
-{ name: "termYears", label: "Term (Years)", type: "number", value: "", formatter: null, valueType: "number"},
-{ name: "termMonths", label: "Term (Months)", type: "number", value: "", formatter: null, valueType: "number" },
-{ name: "startDate", label: "Start Date", type: "date", value: getDefaultDate(), formatter: null, valueType: "string" },
-{ name: "repayments", label: "Repayment Amount", type: "text", value: "", formatter: "currency",valueType: "number" },
-{ name: "repaymentsFreq", label: "Repayment Frequency", type: "select", value: "weekly", options: ["weekly", "fortnightly", "monthly"], formatter: null, valueType: "string" }
+    { name: "amount", label: "Loan Amount", type: "text", value: "", formatter: "currency", valueType: "number" },
+    { name: "rate", label: "Interest Rate", type: "text", value: "", formatter: "percentage", valueType: "number" },
+    { name: "termYears", label: "Term (Years)", type: "number", value: "", formatter: null, valueType: "number" },
+    { name: "termMonths", label: "Term (Months)", type: "number", value: "", formatter: null, valueType: "number" },
+    { name: "startDate", label: "Start Date", type: "date", value: getDefaultDate(), formatter: null, valueType: "string" },
+    { name: "repayments", label: "Repayment Amount", type: "text", value: "", formatter: "currency", valueType: "number" },
+    { name: "repaymentsFreq", label: "Repayment Frequency", type: "select", value: "weekly", options: ["weekly", "fortnightly", "monthly"], formatter: null, valueType: "string" }
+])
+
+const repaymentAdjustmentConfigs = () => ([
+    { name: "ra_startDate", label: "Adjustment Date", type: "date", value: getDefaultDate(), formatter: null, valueType: "string" },
+    { name: "ra_repayments", label: "Adjustment Amount", type: "text", value: "", formatter: "currency", valueType: "number" },
 ])
 
 
-function getDefaultDate(){
+
+function getDefaultDate() {
     const today = new Date();
     const yyyy = today.getFullYear();
     let mm = today.getMonth() + 1; // Months are zero-based
