@@ -4,26 +4,33 @@
 // - `inputs` is the structured data object (with groups like loanInputs, etc.)
 // - `collect`: if true, gathers and returns callback results
 // - `shortCircuit`: if true, exits early when a condition is met (typically for validation)
-export function applyFunctionToInputs(data = null, callback, inputs, collect = false, shortCircuit = false) {
-    const result = initializeResultStructure(collect); // result is either an object (collect=true) or null
+export function applyFunctionToInputs(
+    data = null,
+    callback,
+    inputs,
+    collect = false,
+    shortCircuit = false,
+    earlyReturnValueMode = false // ✅ new option
+) {
+    const result = initializeResultStructure(collect);
 
     for (const group in inputs) {
-        // Apply the callback logic to each group (e.g., loanInputs)
-        const groupResult = processGroup(group, inputs[group], callback, data, collect, shortCircuit);
+        const groupResult = processGroup(group, inputs[group], callback, data, collect, shortCircuit, earlyReturnValueMode);
+
+        if (earlyReturnValueMode && groupResult !== undefined) {
+            return groupResult; // ✅ return actual result from callback
+        }
 
         if (collect) {
-            result[group] = groupResult; // Store results per group
+            result[group] = groupResult;
         } else if (shortCircuit && groupResult === false) {
-            return true; // Exit early if short-circuit condition met (e.g., an invalid input found)
+            return true;
         }
     }
 
-    // Final result:
-    // - If collecting, return the full result object
-    // - If short-circuiting, return false if nothing triggered early return
-    // - Otherwise return a shallow copy of the original inputs
     return collect ? result : (shortCircuit ? false : { ...inputs });
 }
+
 
 // Initializes an empty result structure if we're collecting outputs
 function initializeResultStructure(collect) {
@@ -31,27 +38,29 @@ function initializeResultStructure(collect) {
 }
 
 // Processes each "group" (like loanInputs), which is an array of rows (arrays of data objects)
-function processGroup(group, dataRows, callback, data, collect, shortCircuit) {
+function processGroup(group, dataRows, callback, data, collect, shortCircuit, earlyReturnValueMode) {
     if (collect) {
-        // If collecting, map each row to a processed output row
-        return dataRows.map(dataRow => processDataRow(dataRow, callback, data, shortCircuit));
+        return dataRows.map(row => processDataRow(row, callback, data, shortCircuit, earlyReturnValueMode));
     }
 
-    // If not collecting, and using short-circuiting, loop and exit early if needed
-    for (const dataRow of dataRows) {
-        const shouldExit = processDataRow(dataRow, callback, data, shortCircuit);
-        if (shortCircuit && shouldExit === false) return false;
+    for (const row of dataRows) {
+        const result = processDataRow(row, callback, data, shortCircuit, earlyReturnValueMode);
+        if (earlyReturnValueMode && result !== undefined) return result;
+        if (shortCircuit && result === false) return false;
     }
 }
 
 // Processes each row (a row is an object with multiple dataInputs)
-function processDataRow(dataRow, callback, data, shortCircuit) {
+function processDataRow(dataRow, callback, data, shortCircuit, earlyReturnValueMode) {
     const outputRow = [];
 
     for (const [key, dataInput] of Object.entries(dataRow)) {
         const result = applyCallbackToDataInput(callback, data, dataInput);
 
-        // Short-circuit condition: if a match is found, return false immediately
+        if (earlyReturnValueMode && result !== undefined) {
+            return result; // ✅ stop and return found value
+        }
+
         if (shortCircuit && result === true) return false;
 
         outputRow.push(result);
@@ -69,4 +78,18 @@ function applyCallbackToDataInput(callback, data, dataInput) {
     } else {
         return callback(dataInput);
     }
+}
+
+export function getValueByKey(key , data){
+    return applyFunctionToInputs(key, getValueByName, data, false, false, true);
+}
+
+function getValueByName(key, dataInput) {
+    const [keyName] = Object.keys(dataInput)
+
+    if(keyName === key){
+        return dataInput[keyName]
+    }
+        
+    
 }

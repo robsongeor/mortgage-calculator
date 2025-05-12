@@ -1,10 +1,6 @@
-export function amortizationAlgorithm({
-    loanInputs = [],
-    repaymentAdjustments = [],
-    interestOnlyPeriods = [],
-    lumpSumPayments = [],
-    paymentHolidays = []
-  }) {
+import { getValueByKey } from "./js/utils/DataStructureAccess.js";
+
+export function amortizationAlgorithm(inputData) {
     
     const results = {
       finalBalance: 0,
@@ -14,13 +10,16 @@ export function amortizationAlgorithm({
       paymentsMade: 0
     };
 
-    const amount = getValueByKey(loanInputs, "amount");
-    const rate = getValueByKey(loanInputs, "rate");
-    const termYears = getValueByKey(loanInputs, "termYears");
-    const termMonths = getValueByKey(loanInputs, "termMonths");
-    const startDate = getValueByKey(loanInputs, "startDate");
-    const repayments = getValueByKey(loanInputs, "repayments");
-    const repaymentsFreq = getValueByKey(loanInputs, "repaymentsFreq");
+    const amount = getValueByKey("amount", inputData);
+
+    console.log(amount)
+
+    const rate = getValueByKey("rate", inputData);
+    const termYears = getValueByKey("termYears", inputData);
+    const termMonths = getValueByKey("termMonths",inputData);
+    const startDate = getValueByKey("startDate",inputData);
+    const repayments = getValueByKey( "repayments",inputData);
+    const repaymentsFreq = getValueByKey( "repaymentsFreq",inputData);
   
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
 
@@ -69,12 +68,12 @@ export function amortizationAlgorithm({
       totalPrinciple: roundToCents(results.totalPrinciple),
       paymentsMade: results.paymentsMade
     };
-  }
+   }
   
-function getValueByKey(dataArray, key) {
-    const match = dataArray.find(obj => key in obj);
-    return match ? match[key] : undefined;
-  }
+// function getValueByKey(dataArray, key) {
+//     const match = dataArray.find(obj => key in obj);
+//     return match ? match[key] : undefined;
+//   }
 
 function calculateTerm(amount, rate, startDate, endDate, payment, paymentFreq) {
     const totalPayments = getTotalPayments(paymentFreq, startDate, endDate);

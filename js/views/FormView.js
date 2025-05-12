@@ -117,6 +117,7 @@ export default class FormView {
     }
 
     populateInput(data, dataInput){
+        
         const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`)
         inputEl.value = getInputFromData(dataInput.name, data);
 
@@ -124,6 +125,7 @@ export default class FormView {
     }
     
     populateInputs(data) {
+    
         this.inputs = applyFunctionToInputs(data, this.populateInput.bind(this), this.inputs, true)
     }
 

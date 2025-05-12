@@ -8,6 +8,7 @@ export class TermsModule {
     }
 
     addTerm(termData) {
+        console.log(termData)
         const newTerm = this.buildTerm(termData);
 
         this.terms.push(newTerm);
@@ -70,16 +71,17 @@ export class TermsModule {
     }
 
     calculateTermOutputData(inputData) {
+        console.log(inputData)
 
         const test = amortizationAlgorithm(inputData);
 
-        let outputs = [
-            { interestPaid: test.totalInterest },
-            { principlePaid: test.totalPrinciple },
-            { totalPaid: test.totalPayments },
-            { balance: test.finalBalance }
-        ]
+        // let outputs = [
+        //     { interestPaid: test.totalInterest },
+        //     { principlePaid: test.totalPrinciple },
+        //     { totalPaid: test.totalPayments },
+        //     { balance: test.finalBalance }
+        // ]
 
-        return {outputs};
+        //return {outputs};
     }
 }

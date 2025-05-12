@@ -71,28 +71,53 @@ export class AppController {
             [
                 {
                     "loanInputs": [
-                        {
-                            "amount": 210000,
-                            "rate": 6.69,
-                            "termYears": 2,
-                            "termMonths": 0,
-                            "startDate": "2023-09-20",
-                            "repayments": 310.76,
-                            "repaymentsFreq": "weekly",
-                        }
+                        [
+                            {
+                                "amount": 210000
+                            },
+                            {
+                                "rate": 6.69
+                            },
+                            {
+                                "termYears": 2
+                            },
+                            {
+                                "termMonths": 0
+                            },
+                            {
+                                "startDate": "2023-09-20"
+                            },
+                            {
+                                "repayments": 310.76
+                            },
+                            {
+                                "repaymentsFreq": "weekly"
+                            }
+                        ]
                     ],
                     "repaymentAdjustments": [
-                        {
-                            "ra_repayments": 550,
-                            "ra_date": "2023-12-25"
-                        }
+                        [
+                            {
+                                "ra_startDate": ""
+                            },
+                            {
+                                "ra_repayments": 550
+                            }
+                        ]
                     ],
-                    "interestOnlyPeriods": [],
-                    "lumpSumPayments": [],
-                    "paymentHolidays": []
+                    "interestOnlyPeriods": [
+                        []
+                    ],
+                    "lumpSumPayments": [
+                        []
+                    ],
+                    "paymentHolidays": [
+                        []
+                    ]
                 }
             ]
             ;
+            
 
 
         testTerms.forEach((term) => this.termsModule.addTerm(term))
@@ -122,3 +147,4 @@ let c = {
     "lumpSumPayments": [],
     "paymentHolidays": []
 }
+

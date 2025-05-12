@@ -1,3 +1,5 @@
+import { getValueByKey } from "../utils/DataStructureAccess.js";
+
 export function getLoanDurationInMonths(term) {
     const termYears = getInputFromData("termYears", term);
     const termMonths = getInputFromData("termMonths", term);
@@ -6,14 +8,14 @@ export function getLoanDurationInMonths(term) {
 }
 
 export function getStartDate(data){
-    const startDate = getInputFromData("startDate", data)
+    const startDate = getValueByKey("startDate", data)
     return new Date(startDate);
 }
 
 export function getEndDate(data) {
     const startDate = getStartDate(data);
-    const termYears = getInputFromData("termYears", data)
-    const termMonths = getInputFromData("termMonths", data)
+    const termYears = getValueByKey("termYears", data)
+    const termMonths = getValueByKey("termMonths", data)
 
     const endDate = new Date(
         startDate.getFullYear() + Number(termYears),
@@ -105,7 +107,7 @@ export function getFormattedPercent(input){
 
 
 export function getFormattedInput(name, formatter, term){
-    const input = getInputFromData(name, term);
+    const input = getValueByKey(name, term);
     const formatterFunction = formatters[formatter];
 
     return formatterFunction(input);    
@@ -117,8 +119,8 @@ export function getTermString(term) {
 }
 
 export function getTermDuration(term){
-    const termYears = getInputFromData("termYears", term);
-    const termMonths = getInputFromData("termMonths", term);
+    const termYears = getValueByKey("termYears", term);
+    const termMonths = getValueByKey("termMonths", term);
 
     const months = termMonths !== 0 ? `${termMonths} months` : "";
     const yearsString = termYears === 1 ? "year" : "years";

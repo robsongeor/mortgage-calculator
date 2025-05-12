@@ -29,6 +29,7 @@ function createCardFromTemplate() {
 }
 
 function populateCardFields(card, term) {
+
     const fields = {
         amount: getFormattedInput("amount", "currency", term),
         rate: getFormattedInput("rate", "percent", term),
