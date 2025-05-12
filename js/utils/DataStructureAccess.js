@@ -1,105 +1,72 @@
-//Data is the data to apply to the inputs 
-
-
-// Apply the callback function to each input (with or without 'data')
-export function applyFunctionToInputs(data = null, callback, inputs, collect = false) {
-    const result = initializeResultStructure(collect);
+// Main utility: Applies a callback to each input object in the nested input structure.
+// - `data` is optional context passed into the callback
+// - `callback` is the function to run for each input
+// - `inputs` is the structured data object (with groups like loanInputs, etc.)
+// - `collect`: if true, gathers and returns callback results
+// - `shortCircuit`: if true, exits early when a condition is met (typically for validation)
+export function applyFunctionToInputs(data = null, callback, inputs, collect = false, shortCircuit = false) {
+    const result = initializeResultStructure(collect); // result is either an object (collect=true) or null
 
     for (const group in inputs) {
-        processGroup(group, inputs[group], callback, data, collect, result);
+        // Apply the callback logic to each group (e.g., loanInputs)
+        const groupResult = processGroup(group, inputs[group], callback, data, collect, shortCircuit);
+
+        if (collect) {
+            result[group] = groupResult; // Store results per group
+        } else if (shortCircuit && groupResult === false) {
+            return true; // Exit early if short-circuit condition met (e.g., an invalid input found)
+        }
     }
 
-    return result;
+    // Final result:
+    // - If collecting, return the full result object
+    // - If short-circuiting, return false if nothing triggered early return
+    // - Otherwise return a shallow copy of the original inputs
+    return collect ? result : (shortCircuit ? false : { ...inputs });
 }
 
-// Initialize the result structure depending on whether we want to collect values
+// Initializes an empty result structure if we're collecting outputs
 function initializeResultStructure(collect) {
     return collect ? {} : null;
 }
 
-// Process each group in the inputs
-function processGroup(group, dataRows, callback, data, collect, result) {
-    if (collect) result[group] = [];
+// Processes each "group" (like loanInputs), which is an array of rows (arrays of data objects)
+function processGroup(group, dataRows, callback, data, collect, shortCircuit) {
+    if (collect) {
+        // If collecting, map each row to a processed output row
+        return dataRows.map(dataRow => processDataRow(dataRow, callback, data, shortCircuit));
+    }
 
-    dataRows.forEach(dataRow => {
-        const outputRow = processDataRow(dataRow, callback, data);
-        
-        if (collect) result[group].push(outputRow);
-    });
+    // If not collecting, and using short-circuiting, loop and exit early if needed
+    for (const dataRow of dataRows) {
+        const shouldExit = processDataRow(dataRow, callback, data, shortCircuit);
+        if (shortCircuit && shouldExit === false) return false;
+    }
 }
 
-// Process each row in the group by applying the callback to each data input
-function processDataRow(dataRow, callback, data) {
-    return Object.entries(dataRow).map(([key, dataInput]) => {
-        return applyCallbackToDataInput(callback, data, dataInput);
-    });
+// Processes each row (a row is an object with multiple dataInputs)
+function processDataRow(dataRow, callback, data, shortCircuit) {
+    const outputRow = [];
+
+    for (const [key, dataInput] of Object.entries(dataRow)) {
+        const result = applyCallbackToDataInput(callback, data, dataInput);
+
+        // Short-circuit condition: if a match is found, return false immediately
+        if (shortCircuit && result === true) return false;
+
+        outputRow.push(result);
+    }
+
+    return outputRow;
 }
 
-// Apply the callback to a data input based on whether 'data' is needed
+// Applies the callback function to a single data input
+// - If the callback expects two args, pass both `data` and `dataInput`
+// - Otherwise, pass only `dataInput`
 function applyCallbackToDataInput(callback, data, dataInput) {
     if (callback.length === 2) {
-        return callback(data, dataInput);  // Call with 'data' if the callback expects it
+        return callback(data, dataInput);
     } else {
-        return callback(dataInput);  // Call without 'data' if it's not needed
+        return callback(dataInput);
     }
-}
-
-
-    /* FUNCTION UN ABSTRACTED //
-
-    applyFunctionToInputs(data = null, callback, inputs, collect = false) {
-        const result = collect ? {} : null;
-    
-        for (const group in inputs) {
-            if (collect) result[group] = [];
-    
-            inputs[group].forEach((dataRow, rowIndex) => {
-                const outputRow = [];
-    
-                for (const [key, dataInput] of Object.entries(dataRow)) {
-                    const output = callback.length === 2
-                        ? callback(data, dataInput)
-                        : callback(dataInput); 
-    
-                    if (collect) outputRow.push(output);
-                }
-    
-                if (collect) result[group].push(outputRow);
-            });
-        }
-    
-        return collect ? result : { ...inputs };
-    }
-    */
-
-
-const dataObject = {
-    "loanInputs": [
-        {
-            "amount": 210000,
-            "rate": 6.69,
-            "termYears": 2,
-            "termMonths": 0,
-            "startDate": "2023-09-20",
-            "repayments": 310.76,
-            "repaymentsFreq": "weekly"
-        }
-    ],
-    "repaymentAdjustments": [
-        {
-            "ra_repayments": 550,
-            "ra_date": "2023-12-25"
-        }
-    ],
-    "interestOnlyPeriods": [],
-    "lumpSumPayments": [],
-    "paymentHolidays": [],
-    "outputs": [
-        {
-            "interestPaid": 0,
-            "principlePaid": 0,
-            "totalPaid": 0,
-            "balance": 210000,
-        }
-    ]
 }

@@ -46,30 +46,26 @@ export default class FormModel {
     }
 
     process(rawFormData) {
-        
-        //Process will clean the data, validate and return either an error or success
-        // First turn number strings into numbers
-        // Check numbers are valid - not less than 0, percents not greater than x%
-        // Check dates are valid. optional dates cant be less than start or greater than end of term
-        // 
-        console.log(rawFormData)
         const cleaned =  applyFunctionToInputs(null, this.cleanNumbers.bind(this), rawFormData, true);
-        console.log(cleaned)
         const validated = applyFunctionToInputs(null, this.validateNumbers.bind(this), cleaned, true);
-        console.log(validated)
-        const containsInvalid = applyFunctionToInputs(null, this.containsInvalid.bind(this), validated, true)
+        const containsInvalid = applyFunctionToInputs(null, this.containsInvalid.bind(this), validated, false, true)
         console.log(containsInvalid)
 
-        // if (Object.keys(invalidInputs).length > 0) {
-        //     events.emit("formModel:validationFailed", invalidInputs);
-        //     console.log("failed")
-        // } else {
-        //     const parsed = this.mapOverInputGroups(validated, this.parseValues);
-        //     events.emit("formModel:validationSuccessful", parsed);
-        // }
+        if (containsInvalid) {
+            events.emit("formModel:validationFailed", validated);
+            console.log("failed")
+        } else {
+            const parsed = applyFunctionToInputs(null, this.parseValues.bind(this), validated, true, false)
+            console.log(parsed)
+            events.emit("formModel:validationSuccessful", parsed);
+        }
     }
 
-    parseValues = ({ name, value, formatter }) => ({ [name]: value, formatter });
+
+
+    parseValues(dataInput){
+        return { [dataInput.name]: dataInput.value}
+    }
 
     getInvalidInputs(data) {
         const invalidInputs = {};

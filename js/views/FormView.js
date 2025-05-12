@@ -107,7 +107,7 @@ export default class FormView {
     }
 
 
-    clearInput(){
+    clearInput(dataInput){
         const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`);
         inputEl.value = "";
     }
