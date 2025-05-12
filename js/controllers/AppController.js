@@ -72,64 +72,25 @@ export class AppController {
                 {
                     "loanInputs": [
                         {
-                            "amount": 510000,
-                        },
-                        {
-                            "rate": 6.79,
-                        },
-                        {
-                            "termYears": 1,
-                        },
-                        {
-                            "termMonths": 6,
-                        },
-                        {
-                            "startDate": "2023-09-20",
-                        },
-                        {
-                            "repayments": 770.25,
-                        },
-                        {
-                            "repaymentsFreq": "weekly",
-                        }
-                    ],
-                    "repaymentAdjustments": [],
-                    "interestOnlyPeriods": [],
-                    "lumpSumPayments": [],
-                    "paymentHolidays": []
-                },
-                {
-                    "loanInputs": [
-                        {
                             "amount": 210000,
-                        },
-                        {
                             "rate": 6.69,
-                        },
-                        {
                             "termYears": 2,
-                        },
-                        {
                             "termMonths": 0,
-                        },
-                        {
                             "startDate": "2023-09-20",
-                        },
-                        {
                             "repayments": 310.76,
-                        },
-                        {
                             "repaymentsFreq": "weekly",
                         }
                     ],
-                    "repaymentAdjustments": [],
+                    "repaymentAdjustments": [
+                        {
+                            "ra_repayments": 550,
+                            "ra_date": "2023-12-25"
+                        }
+                    ],
                     "interestOnlyPeriods": [],
                     "lumpSumPayments": [],
                     "paymentHolidays": []
-                },
-
-
-
+                }
             ]
             ;
 

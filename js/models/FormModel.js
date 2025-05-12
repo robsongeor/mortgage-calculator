@@ -1,4 +1,5 @@
 import events from "../pubsub.js";
+import { applyFunctionToInputs } from "../utils/DataStructureAccess.js";
 import { extractNumberFromString, isValidNumericValue } from "../utils/FormUtils.js";
 
 export default class FormModel {
@@ -16,27 +17,59 @@ export default class FormModel {
         this.data = { ...rawFormData }
     }
 
+    cleanNumbers(dataInput){
+        const cleanNumber = dataInput.valueType === "number" ?
+        extractNumberFromString(dataInput.value): dataInput.value
+        
+        return {
+            ...dataInput,
+            value: cleanNumber
+        };
+    }
+
+    validateNumbers(dataInput){
+        const isValid = dataInput.valueType === "number"
+            ? isValidNumericValue(dataInput)
+            : "not checked"
+
+        return {
+            ...dataInput,
+            valid: isValid
+        };
+    }
+
+    containsInvalid(dataInput){
+        if(dataInput.valid === false){
+            return true;
+        }
+        return
+    }
+
     process(rawFormData) {
+        
         //Process will clean the data, validate and return either an error or success
         // First turn number strings into numbers
         // Check numbers are valid - not less than 0, percents not greater than x%
         // Check dates are valid. optional dates cant be less than start or greater than end of term
         // 
-        const cleaned = this.mapOverInputGroups(rawFormData, this.removeNumberFormatting);
-        const validated = this.validateInputs(cleaned);
-        const invalidInputs = this.getInvalidInputs(validated);
+        console.log(rawFormData)
+        const cleaned =  applyFunctionToInputs(null, this.cleanNumbers.bind(this), rawFormData, true);
+        console.log(cleaned)
+        const validated = applyFunctionToInputs(null, this.validateNumbers.bind(this), cleaned, true);
+        console.log(validated)
+        const containsInvalid = applyFunctionToInputs(null, this.containsInvalid.bind(this), validated, true)
+        console.log(containsInvalid)
 
-        
-        if (Object.keys(invalidInputs).length > 0) {
-            events.emit("formModel:validationFailed", invalidInputs);
-            console.log("failed")
-        } else {
-            const parsed = this.mapOverInputGroups(validated, this.parseValues);
-            events.emit("formModel:validationSuccessful", parsed);
-        }
+        // if (Object.keys(invalidInputs).length > 0) {
+        //     events.emit("formModel:validationFailed", invalidInputs);
+        //     console.log("failed")
+        // } else {
+        //     const parsed = this.mapOverInputGroups(validated, this.parseValues);
+        //     events.emit("formModel:validationSuccessful", parsed);
+        // }
     }
 
-    parseValues = ({ name, value, formatter }) => ({ [name]: value,  formatter });
+    parseValues = ({ name, value, formatter }) => ({ [name]: value, formatter });
 
     getInvalidInputs(data) {
         const invalidInputs = {};
@@ -52,6 +85,7 @@ export default class FormModel {
     }
 
     validateInputs(data) {
+
         //Check all numbers
         const validatedNumbers = this.mapOverInputGroups(data, this.validateNumbers);
 
@@ -62,6 +96,8 @@ export default class FormModel {
     }
 
     validateTermDuration(data) {
+        console.log(this.getValueByKey("termYears", data))
+
         const termYears = data.loanInputs.find(input => input.name === "termYears");
         const termMonths = data.loanInputs.find(input => input.name === "termMonths");
 
@@ -76,16 +112,7 @@ export default class FormModel {
         return data;
     }
 
-    validateNumbers = (dataInput) => {
-        const isValid = dataInput.valueType === "number"
-            ? isValidNumericValue(dataInput)
-            : "not checked"
-
-        return {
-            ...dataInput,
-            valid: isValid
-        };
-    }
+ 
 
     removeNumberFormatting = (dataInput) => {
         const cleanedValue = dataInput.valueType === "number"
@@ -100,13 +127,33 @@ export default class FormModel {
 
     mapOverInputGroups = (data, operator) => {
         const dataCopy = {};
-    
+
         for (const group in data) {
             if (Array.isArray(data[group])) {
                 dataCopy[group] = data[group].map(dataInput => operator(dataInput));
             }
         }
-    
+
         return dataCopy;
+    }
+
+    // The modified search function with key argument
+    searchForKey(key, _, dataInput) {
+
+        if (dataInput.name === key) {  // Compare the 'name' property with the given key
+            return dataInput[key];  // Return the value if the key matches
+        }
+        return undefined;  // Return undefined if the key doesn't match
+    }
+
+    // Example function to search for a key in the data structure
+    getValueByKey(key, rawData) {
+
+        return applyFunctionToInputs(
+            null,  // No need for 'data' in this case
+            this.searchForKey.bind(null, key),  // Bind the 'key' argument to the callback
+            rawData,
+            true // Collect mode
+        );
     }
 }

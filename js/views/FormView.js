@@ -1,5 +1,6 @@
 import DataInput from "../components/DataInput.js";
 import events from "../pubsub.js";
+import { applyFunctionToInputs } from "../utils/DataStructureAccess.js";
 import { createButton } from "../utils/FormUtils.js";
 import { getInputFromData } from "./termCardUtils.js";
 
@@ -17,6 +18,7 @@ export default class FormView {
 
         // Subscribe to relevant UI events
         this._registerEvents();
+
     }
 
     _registerEvents() {
@@ -27,18 +29,29 @@ export default class FormView {
     }
 
     _createForm(defaultGroupConfigs) {
-        // Create inputs from default configuration
         for (const group in defaultGroupConfigs){
-            console.log(defaultGroupConfigs[group])
-            this._createGroupDiv(group);
-            defaultGroupConfigs[group].forEach(config => {
-                this.createInput(config, group);
-            })
+            this._createGroup(group, defaultGroupConfigs[group]);
         }
 
-        // Create and append Save/Cancel buttons
         this._createButtons();
     }
+
+    _createGroup(groupName, configs) {
+        this._createGroupDiv(groupName);
+        const groupDiv = this.el.querySelector(`.${groupName}`);
+        if (!this.inputs[groupName]) this.inputs[groupName] = [];
+    
+        const groupObject = {};
+    
+        configs.forEach(config => {
+            const input = new DataInput(config);
+            groupDiv.appendChild(input.getElement());
+            groupObject[input.name] = input;
+        });
+    
+        this.inputs[groupName].push(groupObject);
+    }
+
     _createGroupDiv(group){
         const groupDiv = document.createElement("div");
         groupDiv.classList.add(group);
@@ -58,14 +71,6 @@ export default class FormView {
         });
     }
 
-    createInput(config, group) {
-        // Instantiate input from config and store reference
-        const groupDiv = this.el.querySelector(`.${group}`)
-        const input = new DataInput(config);
-        groupDiv.appendChild(input.getElement());
-        this.inputs[group].push(input);
-    }
-
     save() {
         // Emit event with current raw form values
         events.emit("formView:submit", this.getRawInputValues());
@@ -81,43 +86,48 @@ export default class FormView {
         return this.el;
     }
 
+    getRawInputValue(dataInput){
+        return {
+            name: dataInput.name,
+            valueType: dataInput.valueType,
+            value: dataInput.getValue(),
+        };
+    }
+
     getRawInputValues() {
-        // Build a structured object of raw form input values
-        let data = {};
 
-        for (const group in this.inputs) {
-            data[group] = this.inputs[group].map(dataInput => ({
-                name: dataInput.name,
-                valueType: dataInput.valueType,
-                value: dataInput.getValue(),
-            }));
-        }
+        const rawInputValues = applyFunctionToInputs(
+            null,
+            this.getRawInputValue,
+            this.inputs,
+            true // enable collection mode
+        );
 
-        return data;
+        return rawInputValues;
+    }
+
+
+    clearInput(){
+        const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`);
+        inputEl.value = "";
     }
 
     clearInputs() {
-        // Reset all inputs to empty string
-        for (const group in this.inputs) {
-            this.inputs[group].forEach(dataInput => {
-                const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`);
-                inputEl.value = "";
-            });
-        }
+        this.inputs = applyFunctionToInputs(null, this.clearInput.bind(this), this.inputs, false)
     }
 
+    populateInput(data, dataInput){
+        const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`)
+        inputEl.value = getInputFromData(dataInput.name, data);
+
+        return dataInput;
+    }
+    
     populateInputs(data) {
-        // Set input values from provided data object
-        for (const group in this.inputs) {
-            this.inputs[group].forEach(dataInput => {
-                const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`);
-                inputEl.value = getInputFromData(dataInput.name, data);
-            });
-        }
+        this.inputs = applyFunctionToInputs(data, this.populateInput.bind(this), this.inputs, true)
     }
 
     clearAndHide() {
-        // Wipe inputs and hide form
         this.clearInputs();
         this.hide();
     }
