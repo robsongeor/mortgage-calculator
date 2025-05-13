@@ -1,8 +1,8 @@
 import { getValueByKey } from "../utils/DataStructureAccess.js";
 
 export function getLoanDurationInMonths(term) {
-    const termYears = getInputFromData("termYears", term);
-    const termMonths = getInputFromData("termMonths", term);
+    const termYears = getValueByKey("termYears", term);
+    const termMonths = getValueByKey("termMonths", term);
 
     return Number(termYears) * 12 + Number(termMonths);
 }

@@ -8,7 +8,7 @@ export class TermsModule {
     }
 
     addTerm(termData) {
-        console.log(termData)
+       
         const newTerm = this.buildTerm(termData);
 
         this.terms.push(newTerm);
@@ -85,3 +85,5 @@ export class TermsModule {
         //return {outputs};
     }
 }
+
+

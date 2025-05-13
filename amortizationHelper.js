@@ -24,8 +24,13 @@ export function amortizationAlgorithm(inputData) {
     const endDate = addYearsAndMonths(startDate, termYears, termMonths);
 
     const segments = [];
-  
+
+    console.log(getValueByKey("ra_repayments", inputData));
+
     // Step 1: Build amortization segments based on paymentChanges
+    let thisRA_index = 0;
+    //while()
+
     const sortedChanges = [...repaymentAdjustments].sort((a, b) => new Date(a.date) - new Date(b.date));
     let segmentStart = startDate;
     let currentPayment = repayments;
@@ -70,10 +75,7 @@ export function amortizationAlgorithm(inputData) {
     };
    }
   
-// function getValueByKey(dataArray, key) {
-//     const match = dataArray.find(obj => key in obj);
-//     return match ? match[key] : undefined;
-//   }
+
 
 function calculateTerm(amount, rate, startDate, endDate, payment, paymentFreq) {
     const totalPayments = getTotalPayments(paymentFreq, startDate, endDate);

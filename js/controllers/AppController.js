@@ -117,7 +117,7 @@ export class AppController {
                 }
             ]
             ;
-            
+
 
 
         testTerms.forEach((term) => this.termsModule.addTerm(term))
@@ -126,25 +126,20 @@ export class AppController {
 
 
 let c = {
-    "loanInputs": [
-        {
-            "amount": 210000,
-            "rate": 6.69,
-            "termYears": 2,
-            "termMonths": 0,
-            "startDate": "2023-09-20",
-            "repayments": 310.76,
-            "repaymentsFreq": "weekly",
-        }
-    ],
-    "repaymentAdjustments": [
-        {
-            "ra_repayments": 550,
-            "ra_date": "2023-12-25"
-        }
-    ],
-    "interestOnlyPeriods": [],
-    "lumpSumPayments": [],
-    "paymentHolidays": []
-}
-
+    loanInputs: {
+      amount: { value: 210000 },
+      rate: { value: 6.69 },
+      termYears: { value: 2 },
+      termMonths: { value: 0 },
+      startDate: { value: "2023-09-20" },
+      repayments: { value: 310.76 },
+      repaymentsFreq: { value: "weekly" }
+    },
+    repaymentAdjustments: {
+      ra_0_repayments: { value: 550 },
+      ra_0_date: { value: "2023-12-25" }
+    },
+    interestOnlyPeriods: {},
+    lumpSumPayments: {},
+    paymentHolidays: {}
+  };

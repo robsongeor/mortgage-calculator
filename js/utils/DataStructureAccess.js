@@ -81,7 +81,10 @@ function applyCallbackToDataInput(callback, data, dataInput) {
 }
 
 export function getValueByKey(key , data){
-    return applyFunctionToInputs(key, getValueByName, data, false, false, true);
+    let value = applyFunctionToInputs(key, getValueByName, data, false, false, true);
+
+    //If returns array value is undefined
+    return Array.isArray(value) ? null : value;
 }
 
 function getValueByName(key, dataInput) {
@@ -89,7 +92,9 @@ function getValueByName(key, dataInput) {
 
     if(keyName === key){
         return dataInput[keyName]
-    }
-        
+    } 
+
+  
     
 }
+
