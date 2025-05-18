@@ -1,6 +1,6 @@
 import DataInput from "../components/DataInput.js";
 import events from "../pubsub.js";
-import { applyFunctionToInputs } from "../utils/DataStructureAccess.js";
+import { applyFunctionToDataStructure, applyFunctionToGroup, getValueByKey } from "../utils/DataStructureAccess.js";
 import { createButton } from "../utils/FormUtils.js";
 import { getInputFromData } from "./termCardUtils.js";
 
@@ -28,36 +28,47 @@ export default class FormView {
         events.on("form:populate", this.populateInputs.bind(this));
     }
 
-    _createForm(defaultGroupConfigs) {
-        for (const group in defaultGroupConfigs){
-            this._createGroup(group, defaultGroupConfigs[group]);
-        }
-
+    _createForm(configs) {
+        this.createGroups(configs)
+        this.createInputs(configs)
         this._createButtons();
     }
 
-    _createGroup(groupName, configs) {
-        this._createGroupDiv(groupName);
-        const groupDiv = this.el.querySelector(`.${groupName}`);
-        if (!this.inputs[groupName]) this.inputs[groupName] = [];
-    
-        const groupObject = {};
-    
-        configs.forEach(config => {
-            const input = new DataInput(config);
-            groupDiv.appendChild(input.getElement());
-            groupObject[input.name] = input;
-        });
-    
-        this.inputs[groupName].push(groupObject);
+    createGroups(configs) {
+        //applyFunctionToDataStructure({data: configs})
+        applyFunctionToDataStructure({
+            groupCallback: this._createGroupDiv.bind(this),
+            data: configs
+        }
+        )
+
     }
 
-    _createGroupDiv(group){
+    _createGroupDiv(groupName) {
         const groupDiv = document.createElement("div");
-        groupDiv.classList.add(group);
+        groupDiv.classList.add(groupName);
         this.el.appendChild(groupDiv);
 
+        // return groupDiv;
+
     }
+
+    createInputs(configs) {
+        // Create each input inside the DIV
+        applyFunctionToDataStructure({
+            inputCallback: this._createInput.bind(this),
+            data: configs,
+        })
+    }
+
+    _createInput(inputName, props, groupName) {
+        const groupDiv = this.el.querySelector(`.${groupName}`)
+        const input = new DataInput(props);
+
+        groupDiv.appendChild(input.getElement());
+        this.inputs[groupName] = { ...this.inputs[groupName], [inputName]: input }
+    }
+
 
     _createButtons() {
         // Create save and cancel buttons with click handlers
@@ -74,6 +85,7 @@ export default class FormView {
     save() {
         // Emit event with current raw form values
         events.emit("formView:submit", this.getRawInputValues());
+        //console.log(this.getRawInputValue())
     }
 
     cancel() {
@@ -86,47 +98,53 @@ export default class FormView {
         return this.el;
     }
 
-    getRawInputValue(dataInput){
+    getRawInputValue(inputName, props, groupName) {
+        const val = props.el.querySelector("input").value;
+
+        const inObject = { name: props.name, valueType: props.valueType, value: val, }
+
         return {
-            name: dataInput.name,
-            valueType: dataInput.valueType,
-            value: dataInput.getValue(),
+            ...inObject
         };
     }
 
     getRawInputValues() {
-
-        const rawInputValues = applyFunctionToInputs(
-            null,
-            this.getRawInputValue,
-            this.inputs,
-            true // enable collection mode
-        );
+        const rawInputValues = applyFunctionToDataStructure({
+            inputCallback: this.getRawInputValue.bind(this),
+            returns: true,
+            data: this.inputs
+        })
 
         return rawInputValues;
     }
 
 
-    clearInput(dataInput){
-        const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`);
-        inputEl.value = "";
+    clearInput(inputName, props, groupName) {
+        props.el.querySelector("input").value = "";
     }
 
     clearInputs() {
-        this.inputs = applyFunctionToInputs(null, this.clearInput.bind(this), this.inputs, false)
+        applyFunctionToDataStructure({
+            inputCallback: this.clearInput.bind(this),
+            data: this.inputs
+        })
     }
 
-    populateInput(data, dataInput){
-        
-        const inputEl = this.el.querySelector(`input[name="${dataInput.name}"]`)
-        inputEl.value = getInputFromData(dataInput.name, data);
+    populateInput(inputName, props, groupName, data) {
 
-        return dataInput;
+        const value = getValueByKey(inputName, data);
+        props.el.querySelector("input").value = value;
+
     }
-    
+
     populateInputs(data) {
-    
-        this.inputs = applyFunctionToInputs(data, this.populateInput.bind(this), this.inputs, true)
+
+        applyFunctionToDataStructure({
+            inputCallback: (inputName, props, groupName) => this.populateInput(inputName, props, groupName, data),
+            data: this.inputs,
+            returns: true
+        })
+
     }
 
     clearAndHide() {

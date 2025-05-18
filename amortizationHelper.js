@@ -11,9 +11,6 @@ export function amortizationAlgorithm(inputData) {
     };
 
     const amount = getValueByKey("amount", inputData);
-
-    console.log(amount)
-
     const rate = getValueByKey("rate", inputData);
     const termYears = getValueByKey("termYears", inputData);
     const termMonths = getValueByKey("termMonths",inputData);
@@ -25,12 +22,26 @@ export function amortizationAlgorithm(inputData) {
 
     const segments = [];
 
-    console.log(getValueByKey("ra_repayments", inputData));
+    let raIndex = 0;
 
-    // Step 1: Build amortization segments based on paymentChanges
-    let thisRA_index = 0;
-    //while()
+    const repaymentAdjustments = []
+   
+    while(getValueByKey(`ra_${raIndex}_repayments`, inputData)){
+        const repaymentAmount = `ra_${raIndex}_repayments`;
+        const repaymentDate = `ra_${raIndex}_date`
 
+        const thisRA = {
+            date: getValueByKey(repaymentDate, inputData),
+            amount: getValueByKey(repaymentAmount, inputData)
+        };
+       
+
+        repaymentAdjustments.push(thisRA)
+        raIndex ++
+    }
+
+ 
+    
     const sortedChanges = [...repaymentAdjustments].sort((a, b) => new Date(a.date) - new Date(b.date));
     let segmentStart = startDate;
     let currentPayment = repayments;

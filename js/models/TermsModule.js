@@ -1,6 +1,7 @@
 import events from "../pubsub.js";
 import { amortizationAlgorithm } from "../../amortizationHelper.js";
 import { clearAllValues, getEndDateISO, getInputFromData, setInputValue } from "../views/termCardUtils.js";
+import { getValueByKey } from "../utils/DataStructureAccess.js";
 
 export class TermsModule {
     constructor() {
@@ -49,14 +50,16 @@ export class TermsModule {
 
         // Get data to copy
         const endDate = getEndDateISO(copy);
-        const amount = getInputFromData("balance", copy)
+        const amount = getValueByKey("balance", copy)
 
         // Clear any values
-        clearAllValues(copy);
+        copy = clearAllValues(copy);
 
         // Copy the stored values
-        setInputValue("startDate",endDate ,copy)
-        setInputValue("amount", amount, copy);
+        copy = setInputValue("startDate",endDate ,copy)
+        copy = setInputValue("amount", amount, copy);
+
+        console.log(copy)
 
         return copy;
     }
@@ -71,18 +74,21 @@ export class TermsModule {
     }
 
     calculateTermOutputData(inputData) {
-        console.log(inputData)
 
         const test = amortizationAlgorithm(inputData);
 
-        // let outputs = [
-        //     { interestPaid: test.totalInterest },
-        //     { principlePaid: test.totalPrinciple },
-        //     { totalPaid: test.totalPayments },
-        //     { balance: test.finalBalance }
-        // ]
+        console.log(inputData)
 
-        //return {outputs};
+        let outputs = {
+            interestPaid:{ value: test.totalInterest },
+            principlePaid:{ value : test.totalPrinciple },
+            totalPaid:{ value: test.totalPayments },
+            balance:{ value: test.finalBalance }
+        }
+
+
+
+        return {outputs}
     }
 }
 

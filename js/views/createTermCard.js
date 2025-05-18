@@ -1,4 +1,5 @@
 import events from "../pubsub.js";
+import { getValueByKey } from "../utils/DataStructureAccess.js";
 import {
     getLoanDurationInMonths,
     getFormattedInput,
@@ -92,8 +93,8 @@ function createSVGBarChart(term) {
     let showOnlyPaid = false;
 
     function updateChart() {
-        const balance = getInputFromData("balance", term);
-        const totalPaid = getInputFromData("totalPaid", term);
+        const balance = getValueByKey("balance", term);
+        const totalPaid = getValueByKey("totalPaid", term);
         
 
         const total = balance + totalPaid;
@@ -116,10 +117,10 @@ function createSVGBarChart(term) {
 
 // -- Utility Functions --
 function calculateWidths(term, totalWidth, showOnlyPaid) {
-    const interestPaid = getInputFromData("interestPaid", term);
-    const principlePaid = getInputFromData('principlePaid', term);
-    const totalPaid = getInputFromData("totalPaid", term);
-    const balance = getInputFromData("balance", term);
+    const interestPaid = getValueByKey("interestPaid", term);
+    const principlePaid = getValueByKey('principlePaid', term);
+    const totalPaid = getValueByKey("totalPaid", term);
+    const balance = getValueByKey("balance", term);
 
     if (showOnlyPaid) {
         return {

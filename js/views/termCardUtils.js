@@ -1,4 +1,4 @@
-import { getValueByKey } from "../utils/DataStructureAccess.js";
+import { applyFunctionToDataStructure, getValueByKey } from "../utils/DataStructureAccess.js";
 
 export function getLoanDurationInMonths(term) {
     const termYears = getValueByKey("termYears", term);
@@ -36,29 +36,29 @@ export function getInputFromData(key, data){
     return undefined;
 }
 
+function clearValue(){
+    return {value: ""};
+}
+
 export function clearAllValues(data) {
-    for (const group in data) {
-        const groupArray = data[group];
-        if (Array.isArray(groupArray)) {
-            groupArray.forEach(item => {
-                for (const key in item) {
-                    item[key] = ""; // Or use null if that's more appropriate
-                }
-            });
-        }
-    }
+    return applyFunctionToDataStructure({
+        inputCallback: clearValue,
+        data: data,
+        returns: true
+    })
+}
+
+function setValue( value){
+    return {value: value}
 }
 
 export function setInputValue(key, value, data){
-    for(const group in data){
-        const currentGroup = data[group];
-        if(Array.isArray(currentGroup)){
-            const target = currentGroup.find(input => input.hasOwnProperty(key));
-            if(target){
-                target[key] = value;
-            }
-        }
-    }
+    return applyFunctionToDataStructure({
+        inputCallback: () => setValue(value),
+        data: data,
+        returns: true,
+        name: key
+    })
 }
 
 

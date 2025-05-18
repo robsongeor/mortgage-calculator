@@ -1,5 +1,5 @@
 import events from "../pubsub.js";
-import { applyFunctionToInputs } from "../utils/DataStructureAccess.js";
+import { applyFunctionToDataStructure, applyFunctionToInputs } from "../utils/DataStructureAccess.js";
 import { extractNumberFromString, isValidNumericValue } from "../utils/FormUtils.js";
 
 export default class FormModel {
@@ -19,51 +19,67 @@ export default class FormModel {
 
     process(rawFormData) {
         // Step 1: Clean raw input values (e.g., strip "$", convert to numbers)
-        const cleaned = applyFunctionToInputs(null, this.cleanNumbers.bind(this), rawFormData, true);
+        const cleaned = applyFunctionToDataStructure({
+            inputCallback: this.cleanNumbers.bind(this),
+            data: rawFormData,
+            returns: true
+        })
     
         // Step 2: Validate cleaned values
-        const validated = applyFunctionToInputs(null, this.validateNumbers.bind(this), cleaned, true);
-    
+        const validated = applyFunctionToDataStructure({
+            inputCallback: this.validateNumbers.bind(this),
+            data: cleaned,
+            returns: true,
+        })
+
         // Step 3: Check if any input is invalid (short-circuiting to exit early)
-        const hasInvalidInputs = applyFunctionToInputs(null, this.containsInvalid.bind(this), validated, false, true);
-    
+        const hasInvalidInputs = applyFunctionToDataStructure({
+            inputCallback: this.containsInvalid.bind(this),
+            data: validated,
+        })
+
         if (hasInvalidInputs) {
             events.emit("formModel:validationFailed", validated);
             console.log("Validation failed");
         } else {
             // Step 4: Extract name-value pairs only (for output)
-            const parsed = applyFunctionToInputs(null, this.parseValues.bind(this), validated, true);
+            //const parsed = applyFunctionToInputs(null, this.parseValues.bind(this), validated, true);
+            const parsed = applyFunctionToDataStructure({
+                inputCallback: this.parseValues.bind(this),
+                data: validated,
+                returns: true,
+            })
             events.emit("formModel:validationSuccessful", parsed);
         }
     }
 
-    parseValues(dataInput){
-        return { [dataInput.name]: dataInput.value}
+    parseValues(inputName, props, groupName){
+        return { value: props.value}
     }
 
-    cleanNumbers(dataInput){
-        const cleanNumber = dataInput.valueType === "number" ?
-        extractNumberFromString(dataInput.value): dataInput.value
+    cleanNumbers(inputName, props, groupName){
+        const cleanNumber = props.valueType === "number" ?
+        extractNumberFromString(props.value): props.value
         
         return {
-            ...dataInput,
+            ...props,
             value: cleanNumber
         };
     }
 
-    validateNumbers(dataInput){
-        const isValid = dataInput.valueType === "number"
-            ? isValidNumericValue(dataInput)
+    validateNumbers(inputName, props, groupName){
+        const isValid = props.valueType === "number"
+            ? isValidNumericValue(props)
             : "not checked"
 
         return {
-            ...dataInput,
+            ...props,
             valid: isValid
         };
     }
 
-    containsInvalid(dataInput) {
-        return dataInput.valid === false;
+    containsInvalid(inputName, props, groupName) {
+        return props.valid === false;
     }
 
     

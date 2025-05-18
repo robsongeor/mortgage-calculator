@@ -60,6 +60,7 @@ export class AppController {
             this.editing = null;
         } else {
             // Add new term
+            console.log(inputData)
             this.termsModule.addTerm(inputData)
         }
 
@@ -68,53 +69,97 @@ export class AppController {
 
     startWithTest() {
         const testTerms =
-            [
-                {
-                    "loanInputs": [
-                        [
-                            {
-                                "amount": 210000
-                            },
-                            {
-                                "rate": 6.69
-                            },
-                            {
-                                "termYears": 2
-                            },
-                            {
-                                "termMonths": 0
-                            },
-                            {
-                                "startDate": "2023-09-20"
-                            },
-                            {
-                                "repayments": 310.76
-                            },
-                            {
-                                "repaymentsFreq": "weekly"
-                            }
-                        ]
-                    ],
-                    "repaymentAdjustments": [
-                        [
-                            {
-                                "ra_startDate": ""
-                            },
-                            {
-                                "ra_repayments": 550
-                            }
-                        ]
-                    ],
-                    "interestOnlyPeriods": [
-                        []
-                    ],
-                    "lumpSumPayments": [
-                        []
-                    ],
-                    "paymentHolidays": [
-                        []
-                    ]
-                }
+            [{
+                loanInputs: {
+                  amount: { value: 210000 },
+                  rate: { value: 6.69 },
+                  termYears: { value: 2 },
+                  termMonths: { value: 0 },
+                  startDate: { value: "2023-09-20" },
+                  repayments: { value: 310.76 },
+                  repaymentsFreq: { value: "weekly" }
+                },
+                repaymentAdjustments: {
+                  ra_0_repayments: { value: 550 },
+                  ra_0_date: { value: "2025-03-20" }
+                },
+                interestOnlyPeriods: {},
+                lumpSumPayments: {},
+                paymentHolidays: {}
+              },
+              {
+                "loanInputs": {
+                    "amount": {
+                        "value": 510000
+                    },
+                    "rate": {
+                        "value": 6.89
+                    },
+                    "termYears": {
+                        "value": 1
+                    },
+                    "termMonths": {
+                        "value": 6
+                    },
+                    "startDate": {
+                        "value": "2023-09-20"
+                    },
+                    "repayments": {
+                        "value": 770.25
+                    },
+                    "repaymentsFreq": {
+                        "value": "weekly"
+                    }
+                },
+                "repaymentAdjustments": {
+                    "ra_0_date": {
+                        "value": "2025-05-18"
+                    },
+                    "ra_0_repayments": {
+                        "value": 1
+                    }
+                },
+                "interestOnlyPeriods": {},
+                "lumpSumPayments": {},
+                "paymentHolidays": {}
+            },
+            {
+                "loanInputs": {
+                    "amount": {
+                        "value": 500384.31
+                    },
+                    "rate": {
+                        "value": 5.79
+                    },
+                    "termYears": {
+                        "value": 0
+                    },
+                    "termMonths": {
+                        "value": 6
+                    },
+                    "startDate": {
+                        "value": "2025-03-20"
+                    },
+                    "repayments": {
+                        "value": 800
+                    },
+                    "repaymentsFreq": {
+                        "value": "weekly"
+                    }
+                },
+                "repaymentAdjustments": {
+                    "ra_0_date": {
+                        "value": "2026-01-31"
+                    },
+                    "ra_0_repayments": {
+                        "value": 1
+                    }
+                },
+                "interestOnlyPeriods": {},
+                "lumpSumPayments": {},
+                "paymentHolidays": {}
+            }
+            
             ]
             ;
 

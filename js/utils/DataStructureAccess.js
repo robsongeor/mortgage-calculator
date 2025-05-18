@@ -1,35 +1,70 @@
-// Main utility: Applies a callback to each input object in the nested input structure.
-// - `data` is optional context passed into the callback
-// - `callback` is the function to run for each input
-// - `inputs` is the structured data object (with groups like loanInputs, etc.)
-// - `collect`: if true, gathers and returns callback results
-// - `shortCircuit`: if true, exits early when a condition is met (typically for validation)
-export function applyFunctionToInputs(
-    data = null,
-    callback,
-    inputs,
-    collect = false,
-    shortCircuit = false,
-    earlyReturnValueMode = false // ✅ new option
-) {
-    const result = initializeResultStructure(collect);
+export function applyFunctionToDataStructure({ name, inputCallback, groupCallback, valueCallback, data, returns = false }) {
+    
+    const returnData = {};
 
-    for (const group in inputs) {
-        const groupResult = processGroup(group, inputs[group], callback, data, collect, shortCircuit, earlyReturnValueMode);
+    for (const [groupName, group] of Object.entries(data)) {
+        const groupData = returnData[groupName] = {};
 
-        if (earlyReturnValueMode && groupResult !== undefined) {
-            return groupResult; // ✅ return actual result from callback
+        if (groupCallback && (!name || name === groupName)) {
+            groupCallback(groupName, group);
         }
 
-        if (collect) {
-            result[group] = groupResult;
-        } else if (shortCircuit && groupResult === false) {
-            return true;
+        for (const [inputName, props] of Object.entries(group)) {
+            const inputData = groupData[inputName] = {}
+            if (inputCallback) {
+                let result;
+                if((!name || name === inputName)){
+                    result = inputCallback(inputName, props, groupName);
+                }else{
+                    result = props;
+                }
+                
+                
+                if (result === true) {
+                    return true; // Short-circuit on failure
+                }
+
+                groupData[inputName] = result;
+            }
+
+            for (const [key, value] of Object.entries(props)) {
+                
+                if (valueCallback) {
+                    inputData[key] =  valueCallback(key, value, inputName, groupName);
+                }
+            }
         }
     }
 
-    return collect ? result : (shortCircuit ? false : { ...inputs });
+    return returns ? returnData : false;
 }
+
+
+// Applies a function to group/s (singular if name not null)
+export function applyFunctionToGroup({ name = null, callback, data, returns = false }) {
+
+    for (const [groupName, group] of Object.entries(data)) {
+
+
+    }
+}
+
+
+
+export function applyFunctionToInputs({ name = null, callback, group, returns = false }) {
+
+
+    for (const [inputName, props] of Object.entries(group)) {
+
+        if (!name) {
+            callback(inputName, props)
+        } else if (name === inputName) {
+            callback(inputName, props)
+        }
+    }
+}
+
+
 
 
 // Initializes an empty result structure if we're collecting outputs
@@ -80,21 +115,26 @@ function applyCallbackToDataInput(callback, data, dataInput) {
     }
 }
 
-export function getValueByKey(key , data){
-    let value = applyFunctionToInputs(key, getValueByName, data, false, false, true);
+export function getValueByKey(key, data) {
+    let result;
+    const setValue = (val) => result = val;
 
-    //If returns array value is undefined
-    return Array.isArray(value) ? null : value;
+    applyFunctionToDataStructure({
+        name: key,
+        data: data,
+        inputCallback: getValueByName(key, setValue)
+    })
+
+   // console.log(key, result)
+    return result
 }
 
-function getValueByName(key, dataInput) {
-    const [keyName] = Object.keys(dataInput)
-
-    if(keyName === key){
-        return dataInput[keyName]
-    } 
-
-  
-    
+function getValueByName(key, setValue) {
+    return function(inputName, props) {
+        if(inputName == key){
+            setValue(props.value)
+            return true;
+        }
+    }
 }
 
