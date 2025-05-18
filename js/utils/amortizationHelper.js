@@ -1,4 +1,4 @@
-import { getValueByKey } from "./js/utils/DataStructureAccess.js";
+import { getValueByKey } from "./DataStructureAccess.js";
 
 export function amortizationAlgorithm(inputData) {
     

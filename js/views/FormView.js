@@ -1,8 +1,7 @@
 import DataInput from "../components/DataInput.js";
 import events from "../pubsub.js";
-import { applyFunctionToDataStructure, applyFunctionToGroup, getValueByKey } from "../utils/DataStructureAccess.js";
+import { applyFunctionToDataStructure, getValueByKey } from "../utils/DataStructureAccess.js";
 import { createButton } from "../utils/FormUtils.js";
-import { getInputFromData } from "./termCardUtils.js";
 
 export default class FormView {
     constructor(inputs, defaultGroupConfigs) {

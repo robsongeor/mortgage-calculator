@@ -1,5 +1,5 @@
 import events from "../pubsub.js";
-import { applyFunctionToDataStructure, applyFunctionToInputs } from "../utils/DataStructureAccess.js";
+import { applyFunctionToDataStructure } from "../utils/DataStructureAccess.js";
 import { extractNumberFromString, isValidNumericValue } from "../utils/FormUtils.js";
 
 export default class FormModel {

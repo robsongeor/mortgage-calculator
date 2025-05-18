@@ -169,22 +169,3 @@ export class AppController {
     }
 }
 
-
-let c = {
-    loanInputs: {
-      amount: { value: 210000 },
-      rate: { value: 6.69 },
-      termYears: { value: 2 },
-      termMonths: { value: 0 },
-      startDate: { value: "2023-09-20" },
-      repayments: { value: 310.76 },
-      repaymentsFreq: { value: "weekly" }
-    },
-    repaymentAdjustments: {
-      ra_0_repayments: { value: 550 },
-      ra_0_date: { value: "2023-12-25" }
-    },
-    interestOnlyPeriods: {},
-    lumpSumPayments: {},
-    paymentHolidays: {}
-  };

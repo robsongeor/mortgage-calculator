@@ -1,5 +1,5 @@
 import events from "../pubsub.js";
-import { amortizationAlgorithm } from "../../amortizationHelper.js";
+import { amortizationAlgorithm } from "../utils/amortizationHelper.js";
 import { clearAllValues, getEndDateISO, getInputFromData, setInputValue } from "../views/termCardUtils.js";
 import { getValueByKey } from "../utils/DataStructureAccess.js";
 
